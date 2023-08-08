@@ -80,7 +80,8 @@ export abstract class ReciboAbstractService {
         columnsFondos: ['*', 45],
         columnsItems: ['*', 35, 45],
         defaultStyle: {
-            fontSize: 9
+            fontSize: 9,
+            font: 'RobotoMono'
         },
         styles: {
             big: {
@@ -123,75 +124,76 @@ export abstract class ReciboAbstractService {
         this.url = 'api/recibos'
     }
 
-    configurarEmpresa (configs: ConfiguracionesModel[]) {
-        this.imprimirNombre = configs.find(
-            c => c.nombre === 'imprimir_nombres_tesoreria'
-        )
-        this.imprimirTrabajador = configs.find(
-            c => c.nombre === 'imprimir_trabajador_tesoreria'
-        )
-        this.ruc = configs.find(c => c.nombre === 'ruc')
-        this.empresa = configs.find(c => c.nombre === 'razon')
-        this.codigo = configs.find(c => c.nombre === 'codigo')
-        this.direccion = configs.find(c => c.nombre === 'direccion')
-        // console.log('configuration ticket', this.configuracion);
-        this.configuracion = {
-            pageMargins: [20, 5],
-            pageSize: {
-                width: 225,
-                height: 'auto'
-            },
-            logo: {
-                image: 'logo',
-                fit: [200, 100],
-                alignment: 'center'
-            },
-            qr: {
-                fit: 70,
-                alignment: 'center',
-                eccLevel: 'M'
-            },
-            columnsCredito: ['*', 65],
-            columnsDatos: [50, '*'],
-            columnsDeudas: ['*', 40, 40],
-            columnsFondos: ['*', 45],
-            columnsItems: ['*', 35, 45],
-            defaultStyle: {
-                fontSize: 9
-            },
-            styles: {
-                big: {
-                    fontSize: 12
-                },
-                bold: {
-                    bold: true
-                },
-                small: {
-                    fontSize: 8
-                },
-                'm-0': {
-                    margin: 0
-                },
-                header: {
-                    alignment: 'center',
-                    bold: true,
-                    fontSize: 12
-                },
-                footer: {
-                    alignment: 'center',
-                    fontSize: 8
-                },
-                total: {
-                    bold: true,
-                    fontSize: 11,
-                    alignment: 'right'
-                }
-            },
-            nombreEmpresa: false,
-            ruc: true,
-            direccion: true
-        }
-    }
+    // configurarEmpresa (configs: ConfiguracionesModel[]) {
+    //     this.imprimirNombre = configs.find(
+    //         c => c.nombre === 'imprimir_nombres_tesoreria'
+    //     )
+    //     this.imprimirTrabajador = configs.find(
+    //         c => c.nombre === 'imprimir_trabajador_tesoreria'
+    //     )
+    //     this.ruc = configs.find(c => c.nombre === 'ruc')
+    //     this.empresa = configs.find(c => c.nombre === 'razon')
+    //     this.codigo = configs.find(c => c.nombre === 'codigo')
+    //     this.direccion = configs.find(c => c.nombre === 'direccion')
+    //     // console.log('configuration ticket', this.configuracion);
+    //     this.configuracion = {
+    //         pageMargins: [20, 5],
+    //         pageSize: {
+    //             width: 225,
+    //             height: 'auto'
+    //         },
+    //         logo: {
+    //             image: 'logo',
+    //             fit: [200, 100],
+    //             alignment: 'center'
+    //         },
+    //         qr: {
+    //             fit: 70,
+    //             alignment: 'center',
+    //             eccLevel: 'M'
+    //         },
+    //         columnsCredito: ['*', 65],
+    //         columnsDatos: [50, '*'],
+    //         columnsDeudas: ['*', 40, 40],
+    //         columnsFondos: ['*', 45],
+    //         columnsItems: ['*', 35, 45],
+    //         defaultStyle: {
+    //             fontSize: 9,
+    //             fonts: 'RobotoMono'
+    //         },
+    //         styles: {
+    //             big: {
+    //                 fontSize: 12
+    //             },
+    //             bold: {
+    //                 bold: true
+    //             },
+    //             small: {
+    //                 fontSize: 8
+    //             },
+    //             'm-0': {
+    //                 margin: 0
+    //             },
+    //             header: {
+    //                 alignment: 'center',
+    //                 bold: true,
+    //                 fontSize: 12
+    //             },
+    //             footer: {
+    //                 alignment: 'center',
+    //                 fontSize: 8
+    //             },
+    //             total: {
+    //                 bold: true,
+    //                 fontSize: 11,
+    //                 alignment: 'right'
+    //             }
+    //         },
+    //         nombreEmpresa: false,
+    //         ruc: true,
+    //         direccion: true
+    //     }
+    // }
 
     toCurrency (value, moneda: IMoneda = null): string {
         if (moneda) {
@@ -488,9 +490,11 @@ export abstract class ReciboAbstractService {
         const content: Content = [
             ...logo,
             ...headers,
+            dashContent,
             {
                 style: 'm-0',
                 layout: 'noBorders',
+                lineHeight: 0.8,
                 table: {
                     headerRows: 1,
                     widths: this.configuracion.columnsDatos,
@@ -502,6 +506,9 @@ export abstract class ReciboAbstractService {
                 style: 'm-0',
                 // layout: 'lightHorizontalLines',
                 layout: 'noBorders',
+                columnGap: 0.5,
+                // characterSpacing: 1,
+                lineHeights: 0.7,
 
                 table: {
                     headerRows: 1,
@@ -510,7 +517,7 @@ export abstract class ReciboAbstractService {
                         [
                             { text: 'DESCRIPCIÓN', style: 'bold' },
                             { text: 'CANT', style: 'bold', alignment: 'right' },
-                            { text: 'TOTAL', style: 'bold', alignment: 'left' }
+                            { text: 'TOTAL', style: 'bold', alignment: 'right' }
                         ],
                         ...items,
                         [
@@ -524,6 +531,7 @@ export abstract class ReciboAbstractService {
                     ]
                 }
             },
+            dashContent,
             ...fondos,
             ...deudas,
             ...pagos,
@@ -553,7 +561,12 @@ export abstract class ReciboAbstractService {
             content: content,
             pageMargins: this.configuracion.pageMargins,
             styles: this.configuracion.styles,
-            defaultStyle: this.configuracion.defaultStyle,
+            defaultStyle: {
+                fontSize: 9,
+                font: 'RobotoMono',
+                characterSpacing: 0,
+                preserveLeadingSpaces: true
+            },
             images
         }
     }

@@ -13,68 +13,7 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs
 export class PdfService {
     constructor (private http: HttpClient) {}
 
-    styles = {
-        header: {
-            fontSize: 18,
-            bold: true,
-            marginBottom: 10
-        },
-        subheader: {
-            fontSize: 14,
-            bold: true,
-            marginBottom: 5
-        },
-        listItem: {
-            fontSize: 12,
-            marginBottom: 3
-        },
-        total: {
-            fontSize: 14,
-            bold: true,
-            marginTop: 10
-        }
-    }
-
     generateAndOpenPdf (docDefinition: TDocumentDefinitions) {
-        // const content: Content = [
-        //     {
-        //         text: 'Recibo de pago',
-        //         style: 'header',
-        //         alignment: 'center'
-        //     },
-        //     {
-        //         text: 'Datos del cliente',
-        //         style: 'subheader',
-        //         alignment: 'center'
-        //     },
-        //     {
-        //         columns: [
-        //             {
-        //                 text: 'Nombre:',
-        //                 width: 100
-        //             },
-        //             {
-        //                 text: 'Nombre del cliente',
-        //                 width: '*'
-        //             }
-        //         ],
-        //         style: 'listItem'
-        //     },
-        //     {
-        //         columns: [
-        //             {
-        //                 text: 'Dirección:',
-        //                 width: 100
-        //             },
-        //             {
-        //                 text: 'Dirección del cliente',
-        //                 width: '*'
-        //             }
-        //         ],
-        //         style: 'listItem'
-        //     }
-        // ]
-
         // const docDefinition: TDocumentDefinitions = {
         //     pageSize: { width: 225, height: 'auto' },
         //     pageOrientation: 'portrait',
@@ -84,6 +23,24 @@ export class PdfService {
         //     defaultStyle: {},
         //     images: {}
         // }
+        pdfMake.fonts = {
+            JetBrains: {
+                normal: 'https://fonts.cdnfonts.com/s/98875/JetBrainsMonoRegular.woff',
+                bold: 'https://fonts.cdnfonts.com/s/98875/JetBrainsMonoBold.woff',
+                italics:
+                    'https://fonts.cdnfonts.com/s/98875/JetBrainsMonoItalic.woff',
+                bolditalics:
+                    'https://fonts.cdnfonts.com/s/98875/JetBrainsMonoBoldItalic.woff'
+            },
+            RobotoMono: {
+                normal: 'https://fonts.cdnfonts.com/s/16061/RobotoMono-Regular.woff',
+                bold: 'https://fonts.cdnfonts.com/s/16061/RobotoMono-Bold.woff',
+                italics:
+                    'https://fonts.cdnfonts.com/s/16061/RobotoMono-MediumItalic.woff',
+                bolditalics:
+                    'https://fonts.cdnfonts.com/s/16061/RobotoMono-BoldItalic.woff'
+            }
+        }
 
         // // Para abrir el PDF en una nueva pestaña
         pdfMake.createPdf(docDefinition).open()
