@@ -1,0 +1,1051 @@
+{
+    "id": 8169,
+    "abono": {
+        "id": 1149,
+        "abono": 28,
+        "anulado": false,
+        "caja": 1014,
+        "cliente": 42,
+        "detalle": "Recibo F001-000057",
+        "dia": "2023-07-27",
+        "hora": "2023-07-27T10:25:20.976758-05:00",
+        "moneda": 1,
+        "usuario": 1
+    },
+    "anulado": false,
+    "base": 23.73,
+    "caja": {
+        "id": 1014,
+        "contometro_final": null,
+        "contometro_inicial": 0,
+        "fin": "2023-07-28T00:01:00.064003-05:00",
+        "inicio": "2023-07-27T10:24:27.247037-05:00",
+        "lado": false,
+        "saldo_inicial": 0,
+        "sede": {
+            "id": 3,
+            "almacen": {
+                "id": 3,
+                "name": "TRANSITO"
+            },
+            "nombre": "GRIFO",
+            "activo": true
+        },
+        "transferencia": null,
+        "usuario": {
+            "id": 1,
+            "cargo": "ProgServ",
+            "nombre": "Daniel Robles",
+            "username": "drobles"
+        }
+    },
+    "cliente": {
+        "id": 42,
+        "activo": true,
+        "cliente_id": 12,
+        "codigo": "Y6T152",
+        "direccion": "direccion larga muy larga que debe caber en dos lineas mínimo para probar con tildes",
+        "display_tipo": "Unidad",
+        "distrito": "",
+        "dni": "",
+        "email": null,
+        "nombre": "TEST S.A.C.",
+        "padron": "5",
+        "persona": "J",
+        "placa": "Y6T152",
+        "razon": "TECNOLOGÍA EN SEGUIMIENTO DE TRANSPORTE S.A.C.",
+        "referencia": "5",
+        "referencia_compuesta": "P005 (Y6T152)",
+        "ruc": 20604711224,
+        "telefono": null,
+        "tipo": "U"
+    },
+    "conductor": null,
+    "dia": "2023-07-27",
+    "deuda": null,
+    "deudas": [
+        {
+            "id": 1562,
+            "dia": "2022-03-09",
+            "nombre": "BOLETAJE",
+            "inicial": 6,
+            "saldo": 6
+        },
+        {
+            "id": 1563,
+            "dia": "2022-03-09",
+            "nombre": "FONDO DE MANTEN",
+            "inicial": 10,
+            "saldo": 10
+        },
+        {
+            "id": 1564,
+            "dia": "2022-03-09",
+            "nombre": "FONDO PAPELETA",
+            "inicial": 10,
+            "saldo": 10
+        },
+        {
+            "id": 1566,
+            "dia": "2022-03-09",
+            "nombre": "LIMP DESINF",
+            "inicial": 5,
+            "saldo": 5
+        },
+        {
+            "id": 1567,
+            "dia": "2022-03-09",
+            "nombre": "TESTST",
+            "inicial": 6,
+            "saldo": 6
+        },
+        {
+            "id": 1568,
+            "dia": "2022-03-09",
+            "nombre": "TTEAT",
+            "inicial": 10,
+            "saldo": 10
+        },
+        {
+            "id": 1584,
+            "dia": "2022-03-12",
+            "nombre": "ADMINISTRACION S-D-F-",
+            "inicial": 20,
+            "saldo": 20
+        },
+        {
+            "id": 1585,
+            "dia": "2022-03-12",
+            "nombre": "BOLETAJE",
+            "inicial": 6,
+            "saldo": 6
+        },
+        {
+            "id": 1586,
+            "dia": "2022-03-12",
+            "nombre": "FONDO DE MANTEN",
+            "inicial": 10,
+            "saldo": 10
+        },
+        {
+            "id": 1587,
+            "dia": "2022-03-12",
+            "nombre": "FONDO PAPELETA",
+            "inicial": 10,
+            "saldo": 10
+        },
+        {
+            "id": 1589,
+            "dia": "2022-03-12",
+            "nombre": "LIMP DESINF",
+            "inicial": 5,
+            "saldo": 5
+        },
+        {
+            "id": 1590,
+            "dia": "2022-03-12",
+            "nombre": "TESTST",
+            "inicial": 6,
+            "saldo": 6
+        },
+        {
+            "id": 1591,
+            "dia": "2022-03-12",
+            "nombre": "TTEAT",
+            "inicial": 10,
+            "saldo": 10
+        },
+        {
+            "id": 1615,
+            "dia": "2022-03-20",
+            "nombre": "ADMINISTRACION S-D-F-",
+            "inicial": 20,
+            "saldo": 20
+        },
+        {
+            "id": 1616,
+            "dia": "2022-03-20",
+            "nombre": "BOLETAJE",
+            "inicial": 6,
+            "saldo": 6
+        },
+        {
+            "id": 1617,
+            "dia": "2022-03-20",
+            "nombre": "FONDO DE MANTEN",
+            "inicial": 10,
+            "saldo": 10
+        },
+        {
+            "id": 1618,
+            "dia": "2022-03-20",
+            "nombre": "LIMP BUS",
+            "inicial": 5,
+            "saldo": 5
+        },
+        {
+            "id": 1619,
+            "dia": "2022-03-20",
+            "nombre": "LIMP DESINF",
+            "inicial": 5,
+            "saldo": 5
+        },
+        {
+            "id": 1620,
+            "dia": "2022-03-20",
+            "nombre": "NUEVO",
+            "inicial": 15,
+            "saldo": 15
+        },
+        {
+            "id": 1621,
+            "dia": "2022-03-20",
+            "nombre": "TESTST",
+            "inicial": 6,
+            "saldo": 6
+        },
+        {
+            "id": 1622,
+            "dia": "2022-03-20",
+            "nombre": "TTEAT",
+            "inicial": 10,
+            "saldo": 10
+        },
+        {
+            "id": 1684,
+            "dia": "2022-03-30",
+            "nombre": "BOLETAJE",
+            "inicial": 6,
+            "saldo": 6
+        },
+        {
+            "id": 1685,
+            "dia": "2022-03-30",
+            "nombre": "FONDO DE MANTEN",
+            "inicial": 10,
+            "saldo": 10
+        },
+        {
+            "id": 1686,
+            "dia": "2022-03-30",
+            "nombre": "FONDO PAPELETA",
+            "inicial": 10,
+            "saldo": 10
+        },
+        {
+            "id": 1687,
+            "dia": "2022-03-30",
+            "nombre": "LIMP BUS",
+            "inicial": 5,
+            "saldo": 5
+        },
+        {
+            "id": 1688,
+            "dia": "2022-03-30",
+            "nombre": "LIMP DESINF",
+            "inicial": 5,
+            "saldo": 5
+        },
+        {
+            "id": 1689,
+            "dia": "2022-03-30",
+            "nombre": "TESTST",
+            "inicial": 6,
+            "saldo": 6
+        },
+        {
+            "id": 1690,
+            "dia": "2022-03-30",
+            "nombre": "TTEAT",
+            "inicial": 10,
+            "saldo": 10
+        },
+        {
+            "id": 1751,
+            "dia": "2022-04-02",
+            "nombre": "ADMINISTRACION S-D-F-",
+            "inicial": 20,
+            "saldo": 20
+        },
+        {
+            "id": 1752,
+            "dia": "2022-04-02",
+            "nombre": "BOLETAJE",
+            "inicial": 6,
+            "saldo": 6
+        },
+        {
+            "id": 1753,
+            "dia": "2022-04-02",
+            "nombre": "FONDO DE MANTEN",
+            "inicial": 10,
+            "saldo": 10
+        },
+        {
+            "id": 1754,
+            "dia": "2022-04-02",
+            "nombre": "FONDO PAPELETA",
+            "inicial": 10,
+            "saldo": 10
+        },
+        {
+            "id": 1755,
+            "dia": "2022-04-02",
+            "nombre": "LIMP BUS",
+            "inicial": 5,
+            "saldo": 5
+        },
+        {
+            "id": 1756,
+            "dia": "2022-04-02",
+            "nombre": "LIMP DESINF",
+            "inicial": 5,
+            "saldo": 5
+        },
+        {
+            "id": 1757,
+            "dia": "2022-04-02",
+            "nombre": "TESTST",
+            "inicial": 6,
+            "saldo": 6
+        },
+        {
+            "id": 1758,
+            "dia": "2022-04-02",
+            "nombre": "TTEAT",
+            "inicial": 10,
+            "saldo": 10
+        },
+        {
+            "id": 1966,
+            "dia": "2022-07-15",
+            "nombre": "A-MEDIO/UNIVERSITARIO S/1.70",
+            "inicial": 11,
+            "saldo": 11
+        },
+        {
+            "id": 2078,
+            "dia": "2022-09-02",
+            "nombre": "BOLETAJE",
+            "inicial": 6,
+            "saldo": 6
+        },
+        {
+            "id": 2079,
+            "dia": "2022-09-02",
+            "nombre": "FONDO DE MANTEN",
+            "inicial": 10,
+            "saldo": 10
+        },
+        {
+            "id": 2080,
+            "dia": "2022-09-02",
+            "nombre": "LIMP BUS",
+            "inicial": 5,
+            "saldo": 5
+        },
+        {
+            "id": 2081,
+            "dia": "2022-09-02",
+            "nombre": "LIMP DESINF",
+            "inicial": 5,
+            "saldo": 5
+        },
+        {
+            "id": 2082,
+            "dia": "2022-09-02",
+            "nombre": "TTEAT",
+            "inicial": 10,
+            "saldo": 10
+        },
+        {
+            "id": 2102,
+            "dia": "2022-09-13",
+            "nombre": "BOLETAJE",
+            "inicial": 6,
+            "saldo": 6
+        },
+        {
+            "id": 2103,
+            "dia": "2022-09-13",
+            "nombre": "FONDO DE MANTEN",
+            "inicial": 10,
+            "saldo": 10
+        },
+        {
+            "id": 2104,
+            "dia": "2022-09-13",
+            "nombre": "LIMP BUS",
+            "inicial": 5,
+            "saldo": 5
+        },
+        {
+            "id": 2105,
+            "dia": "2022-09-13",
+            "nombre": "LIMP DESINF",
+            "inicial": 5,
+            "saldo": 5
+        },
+        {
+            "id": 2106,
+            "dia": "2022-09-13",
+            "nombre": "TTEAT",
+            "inicial": 10,
+            "saldo": 10
+        },
+        {
+            "id": 2203,
+            "dia": "2022-11-02",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 10
+        },
+        {
+            "id": 2210,
+            "dia": "2022-11-03",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2223,
+            "dia": "2022-11-04",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2230,
+            "dia": "2022-11-05",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 10
+        },
+        {
+            "id": 2237,
+            "dia": "2022-11-06",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2244,
+            "dia": "2022-11-07",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2269,
+            "dia": "2022-11-08",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2276,
+            "dia": "2022-11-09",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2290,
+            "dia": "2022-11-10",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2310,
+            "dia": "2022-11-11",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2317,
+            "dia": "2022-11-12",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2324,
+            "dia": "2022-11-13",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2331,
+            "dia": "2022-11-14",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2343,
+            "dia": "2022-11-15",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2350,
+            "dia": "2022-11-16",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2357,
+            "dia": "2022-11-17",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2397,
+            "dia": "2022-11-18",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2407,
+            "dia": "2022-11-19",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2414,
+            "dia": "2022-11-20",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2426,
+            "dia": "2022-11-21",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2433,
+            "dia": "2022-11-22",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2440,
+            "dia": "2022-11-23",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2453,
+            "dia": "2022-11-24",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2466,
+            "dia": "2022-11-25",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2474,
+            "dia": "2022-11-26",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2481,
+            "dia": "2022-11-27",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2488,
+            "dia": "2022-11-28",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2495,
+            "dia": "2022-11-29",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2502,
+            "dia": "2022-11-30",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2534,
+            "dia": "2022-12-02",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2553,
+            "dia": "2022-12-03",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2560,
+            "dia": "2022-12-04",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2567,
+            "dia": "2022-12-05",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2574,
+            "dia": "2022-12-06",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2581,
+            "dia": "2022-12-07",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2594,
+            "dia": "2022-12-08",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2601,
+            "dia": "2022-12-09",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2608,
+            "dia": "2022-12-10",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2621,
+            "dia": "2022-12-11",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2628,
+            "dia": "2022-12-12",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2635,
+            "dia": "2022-12-13",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2655,
+            "dia": "2022-12-14",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2668,
+            "dia": "2022-12-15",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2675,
+            "dia": "2022-12-16",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2682,
+            "dia": "2022-12-17",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2689,
+            "dia": "2022-12-18",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2696,
+            "dia": "2022-12-19",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2703,
+            "dia": "2022-12-20",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2711,
+            "dia": "2022-12-21",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2718,
+            "dia": "2022-12-22",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2725,
+            "dia": "2022-12-23",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2737,
+            "dia": "2022-12-24",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2744,
+            "dia": "2022-12-25",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2751,
+            "dia": "2022-12-26",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2758,
+            "dia": "2022-12-27",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2777,
+            "dia": "2022-12-28",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2784,
+            "dia": "2022-12-29",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2803,
+            "dia": "2023-01-01",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 2828,
+            "dia": "2023-01-07",
+            "nombre": "BOLETAJE",
+            "inicial": 6,
+            "saldo": 6
+        },
+        {
+            "id": 2829,
+            "dia": "2023-01-07",
+            "nombre": "FONDO DE MANTEN",
+            "inicial": 10,
+            "saldo": 10
+        },
+        {
+            "id": 2830,
+            "dia": "2023-01-07",
+            "nombre": "LIMP BUS",
+            "inicial": 5,
+            "saldo": 5
+        },
+        {
+            "id": 2831,
+            "dia": "2023-01-07",
+            "nombre": "LIMP DESINF",
+            "inicial": 5,
+            "saldo": 5
+        },
+        {
+            "id": 2832,
+            "dia": "2023-01-07",
+            "nombre": "TTEAT",
+            "inicial": 10,
+            "saldo": 10
+        },
+        {
+            "id": 3373,
+            "dia": "2023-02-01",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 3447,
+            "dia": "2023-02-10",
+            "nombre": "BOLETAJE",
+            "inicial": 6,
+            "saldo": 6
+        },
+        {
+            "id": 3448,
+            "dia": "2023-02-10",
+            "nombre": "FONDO DE MANTEN",
+            "inicial": 10,
+            "saldo": 10
+        },
+        {
+            "id": 3449,
+            "dia": "2023-02-10",
+            "nombre": "LIMP DESINF",
+            "inicial": 5,
+            "saldo": 5
+        },
+        {
+            "id": 3450,
+            "dia": "2023-02-10",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 3451,
+            "dia": "2023-02-10",
+            "nombre": "TTEAT",
+            "inicial": 10,
+            "saldo": 10
+        },
+        {
+            "id": 8557,
+            "dia": "2023-06-16",
+            "nombre": "BOLETAJE",
+            "inicial": 6,
+            "saldo": 6
+        },
+        {
+            "id": 8558,
+            "dia": "2023-06-16",
+            "nombre": "FONDO DE MANTEN",
+            "inicial": 10,
+            "saldo": 10
+        },
+        {
+            "id": 8559,
+            "dia": "2023-06-16",
+            "nombre": "LIMP DESINF",
+            "inicial": 5,
+            "saldo": 5
+        },
+        {
+            "id": 8560,
+            "dia": "2023-06-16",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 8561,
+            "dia": "2023-06-16",
+            "nombre": "TTEAT",
+            "inicial": 10,
+            "saldo": 10
+        },
+        {
+            "id": 8583,
+            "dia": "2023-06-21",
+            "nombre": "BOLETAJE",
+            "inicial": 6,
+            "saldo": 6
+        },
+        {
+            "id": 8584,
+            "dia": "2023-06-21",
+            "nombre": "FONDO DE MANTEN",
+            "inicial": 10,
+            "saldo": 10
+        },
+        {
+            "id": 8585,
+            "dia": "2023-06-21",
+            "nombre": "LIMP DESINF",
+            "inicial": 5,
+            "saldo": 5
+        },
+        {
+            "id": 8586,
+            "dia": "2023-06-21",
+            "nombre": "SERVICIO POR RASTREO SATELITAL GPS FRECUENCIA",
+            "inicial": 12,
+            "saldo": 12
+        },
+        {
+            "id": 8587,
+            "dia": "2023-06-21",
+            "nombre": "TTEAT",
+            "inicial": 10,
+            "saldo": 10
+        }
+    ],
+    "documento": {
+        "id": 2,
+        "activo": true,
+        "es_egreso": false,
+        "nombre": "FACTURA",
+        "numero": 58,
+        "sede": {
+            "id": 1,
+            "almacen": {
+                "id": 1,
+                "name": "Principal"
+            },
+            "nombre": "CAJA",
+            "activo": true
+        },
+        "serie": "F001",
+        "sunat": {
+            "id": 6,
+            "codigo": 1,
+            "nombre": "FACTURA",
+            "es_compra": true
+        }
+    },
+    "efectivo": true,
+    "fondos": [],
+    "hora": "2023-07-27T10:25:20.958149-05:00",
+    "igv": 4.27,
+    "items": [
+        {
+            "id": 9015,
+            "base": 23.73,
+            "cantidad": 1.167,
+            "deuda": null,
+            "efectivo": true,
+            "igv": 4.27,
+            "inafecta": 0,
+            "moneda": 1,
+            "observacion": "A: ",
+            "pagado": 28,
+            "precio": 28,
+            "precio_unit": 23.99,
+            "producto": {
+                "id": 149,
+                "activo": true,
+                "automatico": false,
+                "cliente": "N",
+                "codigo": "395",
+                "combustible": true,
+                "es_gasto": false,
+                "fondo": false,
+                "fracciones": true,
+                "igv": true,
+                "isc": 0,
+                "moneda": 1,
+                "nombre": "G MEGAPREMIUN",
+                "precio": 24,
+                "servicio": false,
+                "stock": 0,
+                "variable": false
+            },
+            "recibo": {
+                "id": 8169,
+                "anulado": false,
+                "dia": "2023-07-27",
+                "documento": 2,
+                "efectivo": true,
+                "hora": "2023-07-27T10:25:20.958149-05:00",
+                "moneda": 1,
+                "numero": "000057",
+                "pagado": true,
+                "saldo": 0,
+                "sended": false,
+                "serie": "F001",
+                "total": 28,
+                "usuario": 1
+            },
+            "saldo": 0,
+            "usuario": {
+                "id": 1,
+                "cargo": "ProgServ",
+                "nombre": "Daniel Robles",
+                "username": "drobles"
+            }
+        }
+    ],
+    "inafecta": 0,
+    "modifica": null,
+    "moneda": {
+        "id": 1,
+        "nombre": "Nuevo Sol",
+        "codigo": "S/"
+    },
+    "numero": "000057",
+    "observacion": null,
+    "pagado": true,
+    "saldo": 0,
+    "sended": false,
+    "serie": "F001",
+    "ser_num": "F001-000057",
+    "total": 28,
+    "usuario": 1
+}
