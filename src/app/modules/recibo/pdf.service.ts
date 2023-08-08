@@ -5,6 +5,8 @@ import { Injectable } from '@angular/core'
 import { Content, TDocumentDefinitions } from 'pdfmake/interfaces'
 import { Observable, tap } from 'rxjs'
 
+// import {} from ''
+
 pdfMake.vfs = pdfFonts.pdfMake.vfs
 
 @Injectable({
@@ -14,15 +16,6 @@ export class PdfService {
     constructor (private http: HttpClient) {}
 
     generateAndOpenPdf (docDefinition: TDocumentDefinitions) {
-        // const docDefinition: TDocumentDefinitions = {
-        //     pageSize: { width: 225, height: 'auto' },
-        //     pageOrientation: 'portrait',
-        //     content: content,
-        //     pageMargins: [40, 40, 40, 40],
-        //     styles: this.styles,
-        //     defaultStyle: {},
-        //     images: {}
-        // }
         pdfMake.fonts = {
             JetBrains: {
                 normal: 'https://fonts.cdnfonts.com/s/98875/JetBrainsMonoRegular.woff',
@@ -32,13 +25,12 @@ export class PdfService {
                 bolditalics:
                     'https://fonts.cdnfonts.com/s/98875/JetBrainsMonoBoldItalic.woff'
             },
+
             RobotoMono: {
-                normal: 'https://fonts.cdnfonts.com/s/16061/RobotoMono-Regular.woff',
-                bold: 'https://fonts.cdnfonts.com/s/16061/RobotoMono-Bold.woff',
-                italics:
-                    'https://fonts.cdnfonts.com/s/16061/RobotoMono-MediumItalic.woff',
-                bolditalics:
-                    'https://fonts.cdnfonts.com/s/16061/RobotoMono-BoldItalic.woff'
+                normal: `${window.location.origin}/assets/fonts/roboto-mono/RobotoMono-Regular.woff`,
+                bold: `${window.location.origin}/assets/fonts/roboto-mono/RobotoMono-Regular.woff`,
+                italics: `${window.location.origin}/assets/fonts/roboto-mono/RobotoMono-Regular.woff`,
+                bolditalics: `${window.location.origin}/assets/fonts/roboto-mono/RobotoMono-Regular.woff`
             }
         }
 
