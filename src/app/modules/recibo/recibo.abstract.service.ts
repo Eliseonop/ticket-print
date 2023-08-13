@@ -59,9 +59,9 @@ export abstract class ReciboAbstractService {
     direccion: ConfiguracionesModel
     codigo: ConfiguracionesModel
     configuracion: any = {
-        pageMargins: [20, 5],
+        pageMargins: [5, 20],
         pageSize: {
-            width: 225,
+            width: 200,
             height: 'auto'
         },
         logo: {

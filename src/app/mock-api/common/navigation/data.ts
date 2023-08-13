@@ -15,6 +15,20 @@ export const defaultNavigation: FuseNavigationItem[] = [
         type: 'basic',
         icon: 'heroicons_outline:chart-pie',
         link: '/recibo'
+    },
+    {
+        id: 'print-html',
+        title: 'Print HTML',
+        type: 'basic',
+        icon: 'heroicons_outline:chart-pie',
+        link: '/print-html'
+    },
+    {
+        id: 'thermal-print',
+        title: 'Thermal Print',
+        type: 'basic',
+        icon: 'heroicons_outline:chart-pie',
+        link: '/thermal-print'
     }
 ]
 export const compactNavigation: FuseNavigationItem[] = [

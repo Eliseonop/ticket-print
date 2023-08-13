@@ -124,6 +124,20 @@ export const appRoutes: Route[] = [
                     import('app/modules/recibo/recibo.module').then(
                         m => m.ReciboModule
                     )
+            },
+            {
+                path: 'print-html',
+                loadChildren: () =>
+                    import('app/modules/print-html/print-html.module').then(
+                        m => m.PrintHtmlModule
+                    )
+            },
+            {
+                path: 'thermal-print',
+                loadChildren: () =>
+                    import(
+                        'app/modules/thermal-print/thermal-print.module'
+                    ).then(m => m.ThermalPrintsModule)
             }
         ]
     }
