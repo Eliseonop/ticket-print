@@ -1,26 +1,13 @@
 <strong class="print-section">Status: {{ status }}</strong>
 <div class="w-full flex flex-col items-center justify-center gap-10">
-    <!-- <select (change)="selectPrinter($event)">
-        <option *ngFor="let device of usbDevices" [value]="device">
-            {{ device.productName || 'Unknown Device' }}
+    <h2>Listado de Dispositivos USB</h2>
+    <select (change)="onSelectDevice($event.target.value)">
+        <option value="">Selecciona un dispositivo</option>
+        <option *ngFor="let device of devices" [value]="device">
+            {{ device.productName }}
         </option>
-    </select> -->
+    </select>
 
-    <input
-        class="shadow appearance-none border rounded w-1/2 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ring-2 ring-blue-500"
-        [(ngModel)]="ip"
-        type="text"
-        name="ip"
-        placeholder="IP of printer with WebPRNT"
-    />
-    <button
-        mat-raised-button
-        color="primary"
-        class="text-white font-bold py-2 px-4 rounded"
-        (click)="connectToWebPrint()"
-    >
-        Connect to WebPRNT
-    </button>
     <div>
         <button
             mat-raised-button

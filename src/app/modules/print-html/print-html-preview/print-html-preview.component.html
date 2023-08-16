@@ -1,0 +1,37 @@
+<div class="" [style.width]="mmToPixels(80)" *ngIf="recibo">
+    <div class="receipt p-4 border rounded bg-gray-100">
+        <div>
+            <img src="assets/images/tcontur.jpg" class="max-w-full" />
+        </div>
+        <div class="my-4"></div>
+
+        <div class="text-center font-bold">
+            {{ recibo.documento.nombre }}
+        </div>
+        <div class="text-center font-bold">
+            {{ recibo.serie + '- "' + recibo.numero }}
+        </div>
+        <!-- linea en blanco con atailwinds -->
+        <div class="my-4"></div>
+        <div class="grid grid-cols-3">
+            <div class="col-span-1">FECHA</div>
+            <div class="col-span-2">{{ transformDate(recibo?.hora) }}</div>
+
+            <div class="col-span-1">RUC</div>
+            <div class="col-span-2">{{ recibo?.cliente?.ruc }}</div>
+
+            <div class="col-span-1">PADRON</div>
+            <div class="col-span-2">{{ recibo?.cliente?.padron }}</div>
+
+            <div class="col-span-1">DI"RECCION</div>
+            <div class="col-span-2">
+                {{ recibo?.cliente?.direccion }}
+            </div>
+
+            <div class="qrcode mt-4 text-center">
+                <img src="qrcode-image.png" alt="QR Code" class="max-w-full" />
+                <p>Scan QR Code for details</p>
+            </div>
+        </div>
+    </div>
+</div>

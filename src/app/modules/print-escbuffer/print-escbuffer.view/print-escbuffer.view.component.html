@@ -1,0 +1,22 @@
+<div
+    class="flex flex-col flex-1 w-full max-w-full overflow-hidden relative justify-center items-center"
+>
+    <div>Status : {{ isConnected | async }}</div>
+
+    <div class="">
+        <button
+            disabled="{{ isConnected | async }}"
+            mat-raised-button
+            color="primary"
+            (click)="requestDevice()"
+        >
+            Conectar impresora
+        </button>
+    </div>
+
+    <div>
+        <button mat-raised-button color="primary" (click)="instancePrinter()">
+            Imprimir
+        </button>
+    </div>
+</div>

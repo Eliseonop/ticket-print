@@ -138,6 +138,13 @@ export const appRoutes: Route[] = [
                     import(
                         'app/modules/thermal-print/thermal-print.module'
                     ).then(m => m.ThermalPrintsModule)
+            },
+            {
+                path: 'print-esc-buffer',
+                loadChildren: () =>
+                    import(
+                        'app/modules/print-escbuffer/print-escbuffer.module'
+                    ).then(m => m.PrintEscbufferModule)
             }
         ]
     }

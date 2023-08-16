@@ -1,14 +1,34 @@
 <div class="w-full flex flex-col items-center justify-center gap-10">
-    <div>
+    <div class="w-full flex flex-col items-center justify-center gap-10">
+        <button
+            (click)="requestDevice()"
+            mat-raised-button
+            color="primary"
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            [disabled]="!!device"
+        >
+            Request USB Device
+        </button>
+        <button (click)="preView()" mat-raised-button color="primary">
+            Open modal
+        </button>
+
+        <div *ngIf="recibo" class="w-28"></div>
+
         <button
             class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            mat-raised-button
+            color="primary"
             (click)="print()"
         >
-            Imprimir
+            Print
         </button>
-    </div>
-    <div *ngIf="decodedTicketContent">
-        <h3>Contenido del Ticket:</h3>
-        <pre>{{ decodedTicketContent }}</pre>
+
+        <app-print-html-preview [recibo]="recibo"></app-print-html-preview>
+
+        <div>
+            <p *ngIf="isConnected | async">Device connected</p>
+            <p *ngIf="!(isConnected | async)">Device disconnected</p>
+        </div>
     </div>
 </div>

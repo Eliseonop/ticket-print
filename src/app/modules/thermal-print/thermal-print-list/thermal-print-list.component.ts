@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core'
 import { PrintDriver } from 'ng-thermal-print/lib/drivers/PrintDriver'
 import { PrintService, UsbDriver, WebPrintDriver } from 'ng-thermal-print'
-import { NgxPrinterService } from 'ngx-printer'
 import { tap } from 'rxjs'
 @Component({
     selector: 'app-thermal-print-list',
@@ -13,12 +12,14 @@ export class ThermalPrintListComponent {
     usbPrintDriver: UsbDriver
     webPrintDriver: WebPrintDriver
     ip: string = '10.83.118.160'
+    devices: USBDevice[] = []
+    selectedDevice: USBDevice | undefined
 
-    constructor (
-        private printService: PrintService,
-
-        private printerService: NgxPrinterService
-    ) {
+    vendorId: number = 0x0483
+    productId: number = 0x5740
+    endPoint: any
+    private device: USBDevice
+    constructor (private printService: PrintService) {
         // this.printerService.printAngular()
 
         this.usbPrintDriver = new UsbDriver()
@@ -31,20 +32,23 @@ export class ThermalPrintListComponent {
                 console.log('Not connected to printer.')
             }
         })
+        this.listUsbDevices()
+    }
+    onSelectDevice (device: USBDevice) {
+        this.selectedDevice = device
+    }
+    async listUsbDevices () {
+        try {
+            const usbDevices = await navigator.usb.getDevices()
+            this.devices = usbDevices
+
+            console.log('Devices: ', usbDevices)
+        } catch (error) {
+            console.error('Error listing USB devices:', error)
+        }
     }
 
     async requestUsb () {
-        // native request
-        // const list = await window.navigator.usb.requestDevice({ filters: [] })
-
-        // await list.claimInterface
-
-        // Abre el puerto serie
-        // const port = await navigator.serial.requestPort()
-
-        // Abre la conexión con el puerto
-        // const writer = port.writable.getWriter()
-        // console.log('list', list)
         this.usbPrintDriver
             .requestUsb()
             .pipe(tap(a => console.log('USB Connected', a)))
@@ -54,22 +58,19 @@ export class ThermalPrintListComponent {
             })
     }
 
-    connectToWebPrint () {
-        this.webPrintDriver = new WebPrintDriver(this.ip)
-        this.printService.setDriver(this.webPrintDriver, 'WebPRNT')
-    }
-
     print () {
         this.printService
             .init()
             .setBold(true)
             .writeLine('Hello World!')
+            .writeLine('Hello World!')
+            .writeLine('Hello World!')
+            .writeLine('Hello World!')
+            .writeLine('Hello World!')
+
             .setBold(false)
             .feed(4)
             .cut('full')
             .flush()
     }
-}
-function isChrome () {
-    return navigator.userAgent.indexOf('Chrome') > -1
 }

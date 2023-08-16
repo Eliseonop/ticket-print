@@ -5,9 +5,10 @@ import { PrintHtmlListComponent } from './print-html-list/print-html-list.compon
 import { PrintHtmlRoutes } from './print-html.routes'
 import { RouterModule } from '@angular/router'
 import { MaterialModule } from '../utils/shared/material.module'
-import { NgxPrintElementModule } from 'ngx-print-element'
+import { NgxPrintElementModule } from 'ngx-print-element';
+import { PrintHtmlPreviewComponent } from './print-html-preview/print-html-preview.component'
 @NgModule({
-    declarations: [PrintHtmlListComponent],
+    declarations: [PrintHtmlListComponent, PrintHtmlPreviewComponent],
     imports: [
         RouterModule.forChild(PrintHtmlRoutes),
         CommonModule,

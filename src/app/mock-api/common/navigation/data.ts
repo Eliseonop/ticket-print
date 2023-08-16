@@ -29,6 +29,13 @@ export const defaultNavigation: FuseNavigationItem[] = [
         type: 'basic',
         icon: 'heroicons_outline:chart-pie',
         link: '/thermal-print'
+    },
+    {
+        id: 'print-esc-buffer',
+        title: 'Print ESC Buffer',
+        type: 'basic',
+        icon: 'heroicons_outline:chart-pie',
+        link: '/print-esc-buffer'
     }
 ]
 export const compactNavigation: FuseNavigationItem[] = [
