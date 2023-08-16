@@ -7,7 +7,12 @@ import { BehaviorSubject, tap } from 'rxjs'
 export class DeviceConnectService {
     selectedDevice: BehaviorSubject<USBDevice | null> =
         new BehaviorSubject<USBDevice | null>(null)
-    private endPoint: USBEndpoint | undefined
+    private endPoint: USBEndpoint | undefined = {
+        direction: 'out',
+        endpointNumber: 2,
+        packetSize: 64,
+        type: 'bulk'
+    }
     isConnected: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
 
     constructor () {
@@ -45,12 +50,21 @@ export class DeviceConnectService {
         }
 
         const device = this.selectedDevice.value
+        console.log(device)
         try {
             await device.open()
             await device.selectConfiguration(1)
-            await device.claimInterface(0)
+            await device.claimInterface(
+                device.configuration.interfaces[0].interfaceNumber
+            )
+
+            console.log(device.configuration.interfaces[0].interfaceNumber)
+
+            console.log('device.configuration', device.configuration)
             const endPoints: USBEndpoint[] =
                 device.configuration.interfaces[0].alternate.endpoints
+
+            console.log('endPoints', endPoints)
             this.endPoint = endPoints.find(
                 (endPoint: any) => endPoint.direction === 'out'
             )
@@ -70,10 +84,12 @@ export class DeviceConnectService {
     }
 
     public async write (data: Uint8Array): Promise<void> {
-        if (!this.selectedDevice.value || !this.endPoint) {
-            console.log(
-                'Dispositivo no inicializado o punto final no encontrado'
-            )
+        if (!this.selectedDevice.value) {
+            console.log('Dispositivo no inicializado ')
+            return
+        }
+        if (!this.endPoint) {
+            console.log(' punto final no encontrado')
             return
         }
 
