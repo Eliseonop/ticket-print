@@ -36,6 +36,7 @@ export class DeviceConnectService {
         try {
             const devices = await navigator.usb.getDevices()
             if (devices.length > 0) {
+                console.log('Dispositivo encontrado', devices)
                 this.selectedDevice.next(devices[0])
                 await this.configDevices() // Llamar a la configuración si hay dispositivo
             }
@@ -49,6 +50,8 @@ export class DeviceConnectService {
             return
         }
 
+        // ver por consola si el device esta disponible
+        console.log(this.selectedDevice.value.isochronousTransferOut)
         const device = this.selectedDevice.value
         console.log(device)
         try {

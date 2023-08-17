@@ -1,5 +1,5 @@
-<div class="" [style.width]="mmToPixels(80)" *ngIf="recibo">
-    <div class="receipt p-4 border rounded bg-gray-100">
+<div class="w-[400px] font-mono break-all" [style.width]="" *ngIf="recibo">
+    <div class="receipt p-2 border rounded bg-gray-100 text-md">
         <div>
             <img src="assets/images/tcontur.jpg" class="max-w-full" />
         </div>
@@ -13,21 +13,27 @@
         </div>
         <!-- linea en blanco con atailwinds -->
         <div class="my-4"></div>
-        <div class="grid grid-cols-3">
-            <div class="col-span-1">FECHA</div>
-            <div class="col-span-2">{{ transformDate(recibo?.hora) }}</div>
-
-            <div class="col-span-1">RUC</div>
-            <div class="col-span-2">{{ recibo?.cliente?.ruc }}</div>
-
-            <div class="col-span-1">PADRON</div>
-            <div class="col-span-2">{{ recibo?.cliente?.padron }}</div>
-
-            <div class="col-span-1">DI"RECCION</div>
-            <div class="col-span-2">
-                {{ recibo?.cliente?.direccion }}
+        <div>PADRONPADRONPADRONPADRONPADRONPADRONPADRONPADRON</div>
+        <div class="flex flex-col text-md">
+            <div class="">
+                <span class="w-20 inline-block">FECHA</span>
+                <span>{{ transformDate(recibo?.hora) }}</span>
             </div>
-
+            <div class="">
+                <span class="w-20 inline-block">RUC</span>
+                <span>{{ recibo?.cliente?.ruc }}</span>
+            </div>
+            <div class=" ">
+                <span class="w-20 inline-block">PADRON</span>
+                <span class="">{{ recibo?.cliente?.padron }}</span>
+            </div>
+            <div class="">
+                <span class="w-18 inline-block">DIRECCION</span>
+                <span class="">
+                    {{ recibo?.cliente?.direccion }}
+                </span>
+            </div>
+            <span>------------------------------------------------</span>
             <div class="qrcode mt-4 text-center">
                 <img src="qrcode-image.png" alt="QR Code" class="max-w-full" />
                 <p>Scan QR Code for details</p>

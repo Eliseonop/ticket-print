@@ -337,7 +337,10 @@ export abstract class ReciboAbstractService {
                 data.cliente.nombre
             ])
             if (data.conductor) {
-                datos.push([{ text: 'COND', style: 'bold' }, data.conductor])
+                datos.push([
+                    { text: 'COND', style: 'bold' },
+                    data.conductor.nombre
+                ])
             }
             if (data.deudas.length > 0) {
                 deudas = [

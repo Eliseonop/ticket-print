@@ -13,7 +13,8 @@ import {
     ISede,
     ISunat,
     IReciboDetalle,
-    IUser
+    IUser,
+    IConductor
 } from './ticket.interface'
 
 export class ReciboDetalleModel {
@@ -23,7 +24,7 @@ export class ReciboDetalleModel {
     base: number
     caja: CajaModel
     cliente: ClienteModel
-    conductor: null
+    conductor: ConductorModel
     dia: string
     deuda: null
     deudas: DeudaModel[]
@@ -54,6 +55,8 @@ export class ReciboDetalleModel {
         this.caja = data.caja ? new CajaModel(data.caja) : null
         this.cliente = data.cliente ? new ClienteModel(data.cliente) : null
         this.conductor = data.conductor
+            ? new ConductorModel(data.conductor)
+            : null
         this.dia = data.dia
         this.deuda = data.deuda
         this.deudas = data.deudas.map(deuda => new DeudaModel(deuda))
@@ -409,5 +412,35 @@ export class MonedaModel {
         this.id = data.id
         this.nombre = data.nombre
         this.codigo = data.codigo
+    }
+}
+
+export class ConductorModel {
+    id: number
+    activo: boolean
+    castigado: boolean
+    boletos_save: boolean
+    codigo: string
+    conductor: boolean
+    dni: string
+    estado: string
+    nombre: string
+    vencido: boolean
+    vigente: boolean
+    vencimiento: Date
+
+    constructor (data: IConductor) {
+        this.id = data.id
+        this.activo = data.activo
+        this.castigado = data.castigado
+        this.boletos_save = data.boletos_save
+        this.codigo = data.codigo
+        this.conductor = data.conductor
+        this.dni = data.dni
+        this.estado = data.estado
+        this.nombre = data.nombre
+        this.vencido = data.vencido
+        this.vigente = data.vigente
+        this.vencimiento = data.vencimiento
     }
 }

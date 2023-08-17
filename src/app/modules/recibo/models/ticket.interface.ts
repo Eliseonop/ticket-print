@@ -5,7 +5,7 @@ export interface IReciboDetalle {
     base: number
     caja: ICaja
     cliente: ICliente
-    conductor: null
+    conductor: IConductor
     dia: string
     deuda: null
     deudas: IDeuda[]
@@ -196,4 +196,18 @@ export interface IMoneda {
     id: number
     nombre: string
     codigo: string
+}
+export interface IConductor {
+    id: number
+    activo: boolean
+    castigado: boolean
+    boletos_save: boolean
+    codigo: string
+    conductor: boolean
+    dni: string
+    estado: string
+    nombre: string
+    vencido: boolean
+    vigente: boolean
+    vencimiento: Date
 }
