@@ -22,6 +22,8 @@ import { ProjectMockApi } from 'app/mock-api/dashboards/project/api'
 import { ActivitiesMockApi } from 'app/mock-api/pages/activities/api'
 import { IconsMockApi } from 'app/mock-api/ui/icons/api'
 import { TicketMockApi } from './apps/ticket/api'
+import { SalidaMockApi } from './apps/salida/api'
+import { GeocercaMockApi } from './apps/geocerca/api'
 
 export const mockApiServices = [
     AcademyMockApi,
@@ -47,5 +49,7 @@ export const mockApiServices = [
     ShortcutsMockApi,
     TasksMockApi,
     UserMockApi,
-    TicketMockApi
+    TicketMockApi,
+    SalidaMockApi,
+    GeocercaMockApi
 ]

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core'
 import { PdfService } from '../pdf.service'
-import { TicketService } from '../ticket.service'
+import { ReciboDetalleService } from '../reciboDetalle.service'
 import { TDocumentDefinitions } from 'pdfmake/interfaces'
 
 @Component({
@@ -13,7 +13,7 @@ export class ReciboViewComponent implements OnInit {
 
     constructor (
         private pdfService: PdfService,
-        private ticketService: TicketService
+        private ticketService: ReciboDetalleService
     ) {}
 
     ngOnInit (): void {

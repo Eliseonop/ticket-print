@@ -29,13 +29,14 @@ class Helpers {
 }
 
 import { DateTime } from 'luxon'
-import { IMoneda, IRecibo } from './models/ticket.interface'
+import { IMoneda, IRecibo } from './models/reciboDetalle.interface'
 import {
     ReciboDetalleModel,
     ReciboModel,
     UserModel
-} from './models/ticket.models'
+} from './models/reciboDetalle.models'
 import { Content, TDocumentDefinitions } from 'pdfmake/interfaces'
+import { numeroALetras } from '../utils/functions/numeroALetras'
 
 class ConfiguracionesModel {
     id: number
@@ -294,10 +295,7 @@ export abstract class ReciboAbstractService {
                 qr.push({
                     text:
                         'SON: ' +
-                        Helpers.numeroALetras(
-                            Math.abs(data.total),
-                            data.monedaTextos
-                        ),
+                        numeroALetras(Math.abs(data.total), data.monedaTextos),
                     style: 'small'
                 })
                 qr.push({

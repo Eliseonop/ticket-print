@@ -2,16 +2,17 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core'
 import { MatDialog } from '@angular/material/dialog'
 // import ThermalPrinterEncoder from 'thermal-printer-encoder'
 // import ThermalPrinterEncoder from 'esc-pos-encoder'
-import { default as ThermalPrinterEncoder } from '@manhnd/esc-pos-encoder'
+import EscPosEncoder from '@manhnd/esc-pos-encoder'
 import { DeviceConnectService } from 'app/modules/print-html/devices-conect.service'
-import { IMoneda } from 'app/modules/recibo/models/ticket.interface'
+import { IMoneda } from 'app/modules/recibo/models/reciboDetalle.interface'
 import {
     ItemModel,
     ReciboDetalleModel
-} from 'app/modules/recibo/models/ticket.models'
-import { TicketService } from 'app/modules/recibo/ticket.service'
+} from 'app/modules/recibo/models/reciboDetalle.models'
+import { ReciboDetalleService } from 'app/modules/recibo/reciboDetalle.service'
+import { numeroALetras } from 'app/modules/utils/functions/numeroALetras'
 import { DateTime } from 'luxon'
-import { BehaviorSubject, tap } from 'rxjs'
+import { BehaviorSubject, filter, tap } from 'rxjs'
 @Component({
     selector: 'app-print-html-list',
     templateUrl: './print-html-list.component.html',
@@ -24,7 +25,7 @@ export class PrintHtmlListComponent implements OnInit {
     isConnected: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
     img = new Image()
     recibo: ReciboDetalleModel
-    encoder = new ThermalPrinterEncoder()
+    // encoder = new ThermalPrinterEncoder()
     viewLogo = false
     // {
     //     language: 'esc-pos',
@@ -46,9 +47,49 @@ export class PrintHtmlListComponent implements OnInit {
     direccion = {
         nombre: 'Av. Los Alamos 123'
     }
+    hora = DateTime.local()
+    id = '123456789'
+    caja = {
+        usuario: {
+            username: 'admin'
+        }
+    }
+    anulado = false
+    reimprimir = true
+    user = {
+        username: 'admin'
+    }
 
+    structureData = {
+        header: {
+            viewLogo: false,
+            nombreEmpresa: null,
+            ruc: null,
+            direccion: null,
+            tableDatos: []
+        },
+        body: {
+            items: [],
+            grav: [],
+            iva: [],
+            total: [],
+            fondos: [],
+            deudas: [],
+            saldo: []
+        },
+        footer: {
+            totalLetras: null,
+            pago: null,
+            qr: null,
+            footer: null,
+            anulado: false,
+            reimprimir: false,
+            user: null,
+            empresa: null
+        }
+    }
     constructor (
-        private ticketService: TicketService,
+        private ticketService: ReciboDetalleService,
         private deviceService: DeviceConnectService,
         private _matDialog: MatDialog
     ) {
@@ -66,8 +107,16 @@ export class PrintHtmlListComponent implements OnInit {
 
         this.ticketService
             .getTicketData()
+            .pipe(
+                filter(data => !!data),
+                tap((data: ReciboDetalleModel) => {
+                    this.recibo = data
+                    this.initSaveInformation(data)
+                    console.log('data', this.structureData)
+                })
+            )
             .subscribe((data: ReciboDetalleModel) => {
-                this.recibo = data
+                // this.recibo = data
             })
 
         this.img.src = `${window.location.origin}/assets/images/tcontur.jpg`
@@ -87,75 +136,178 @@ export class PrintHtmlListComponent implements OnInit {
         }
     }
 
-    async generateCodeHeader (
-        data: ReciboDetalleModel
-    ): Promise<ThermalPrinterEncoder> {
-        const headerInfo = {}
-        const tableDatos = [['FECHA', this.transformDate(data?.hora)]]
-        const tableFondos = []
+    initSaveInformation (recibo: ReciboDetalleModel) {
+        // HEADER INIT INFORMAITON
+        this.structureData.header.tableDatos.push([
+            'FECHA',
+            this.transformDate(recibo?.hora)
+        ])
+        this.structureData.header.nombreEmpresa = this.empresa.nombre
+        this.structureData.header.ruc = this.ruc.nombre
+        this.structureData.header.direccion = this.direccion.nombre
 
-        // instance of coder
-        const codeHeader = new ThermalPrinterEncoder()
-            .setPinterType(58)
-            .align('center')
-        if (this.configuracion.nombreEmpresa) {
-            headerInfo['nombreEmpresa'] = this.empresa.nombre
+        if (this.esContable(recibo)) {
+            // es contable header
+            this.structureData.header.viewLogo = true
+            if (recibo.documento.sunat.codigo === 1) {
+                this.structureData.header.tableDatos.push([
+                    'RUC',
+                    recibo.cliente.ruc + ''
+                ])
+            } else {
+                this.structureData.header.tableDatos.push([
+                    'DNI',
+                    recibo.cliente.dni
+                ])
+            }
+            this.structureData.header.tableDatos.push([
+                'RAZON',
+                recibo.cliente.nombre
+            ])
+            if (recibo.cliente.tipo === 'U') {
+                this.structureData.header.tableDatos.push([
+                    'PADRON',
+                    recibo.cliente.referencia
+                ])
+            }
+            if (recibo.cliente.direccion) {
+                this.structureData.header.tableDatos.push([
+                    'DIRECCION',
+                    recibo.cliente.direccion
+                ])
+            }
+            if (recibo.observacion) {
+                this.structureData.header.tableDatos.push([
+                    'OBSERVACION',
+                    recibo.observacion
+                ])
+            }
+            if (recibo.observacion) {
+                this.structureData.header.tableDatos.push([
+                    'OBSERVACION',
+                    recibo.observacion
+                ])
+            }
+            // es contable body
+
+            this.structureData.body.grav = [
+                'GRAV.',
+                this.toCurrency(recibo?.base, recibo.moneda)
+            ]
+
+            this.structureData.body.iva = [
+                'IVA',
+                this.toCurrency(recibo?.igv, recibo.moneda)
+            ]
+            // es contable footer
+            this.structureData.footer.totalLetras = `SON:  ${numeroALetras(
+                recibo.total,
+                recibo.monedaTextos
+            )}`
+            this.structureData.footer.pago = `Forma de pago: ${
+                recibo.efectivo ? 'EFECTIVO' : 'CREDITO'
+            }`
+        } else {
+            this.structureData.header.tableDatos.push([
+                'DNI',
+                recibo.cliente.dni
+            ])
+            this.structureData.header.tableDatos.push([
+                'NOMBRE',
+                recibo.cliente.nombre
+            ])
+            if (recibo.conductor) {
+                this.structureData.header.tableDatos.push([
+                    'CONDUCTOR',
+                    recibo.conductor.codigo
+                ])
+            }
+            // fondos
+            if (recibo.fondos.length > 0) {
+                this.structureData.body.fondos = [
+                    ['FONDO', 'TOTAL'],
+                    ...recibo.fondos.map(fondo => {
+                        return [
+                            fondo.nombre,
+                            this.toCurrency(fondo.total, recibo.moneda)
+                        ]
+                    })
+                ]
+            }
+            // deudas
+            if (recibo.deudas.length > 0) {
+                this.structureData.body.deudas = [
+                    ['DEUDA', 'INICIAL', 'SALDO'],
+                    ...recibo.deudas.map(deuda => {
+                        return [
+                            deuda.nombre + this.shortDia(deuda.dia),
+                            this.toCurrency(deuda.inicial, recibo.moneda),
+                            this.toCurrency(deuda.saldo, recibo.moneda)
+                        ]
+                    })
+                ]
+            }
+            // saldo
+            if (recibo.saldo) {
+                this.structureData.body.saldo = [
+                    ['EN EFECTIVO', (recibo.total - recibo.saldo).toFixed(2)],
+                    ['AL CREDITO', recibo.saldo.toFixed(2) + '']
+                ]
+            }
         }
-        if (this.configuracion.ruc) {
-            headerInfo['ruc'] = this.ruc.nombre
+        // BODY INIT INFORMATION
+        this.structureData.body.items = recibo.items.map((item: ItemModel) => {
+            return [
+                item?.stringRecibo,
+                this.toCurrency(item?.precio, recibo.moneda)
+            ]
+        })
+        this.structureData.body.total = [
+            'TOTAL',
+            this.toCurrency(recibo?.total, recibo.moneda)
+        ]
+
+        // FOOTER INIT INFORMATION
+        const qrInformation = {
+            ruc: recibo.cliente.codigo,
+            tipo: recibo.documento.nombre,
+            serie: recibo.serie,
+            numero: recibo.numero,
+            total: recibo.total,
+            igv: recibo.igv
+        }
+        this.structureData.footer.qr = JSON.stringify(qrInformation)
+
+        this.structureData.footer.footer = `H.PROC: ${this.hora.toFormat(
+            'yyyy-MM-dd HH:mm:ss'
+        )} ID: ${this.id} ${this.caja.usuario.username.toUpperCase()}`
+        this.structureData.footer.anulado = this.anulado
+        this.structureData.footer.reimprimir = this.reimprimir
+        this.structureData.footer.user = this.user.username.toUpperCase()
+        this.structureData.footer.empresa = 'Sistema de Gestion TCONTUR'
+    }
+
+    async generateCodeHeader (data: ReciboDetalleModel): Promise<EscPosEncoder> {
+        const codeHeader = new EscPosEncoder().setPinterType(58).align('center')
+        if (this.structureData.header.nombreEmpresa) {
+            codeHeader.line(this.structureData.header.nombreEmpresa)
+        }
+        if (this.structureData.header.ruc) {
+            codeHeader.line('RUC: ' + this.structureData.header.ruc)
         }
 
         if (this.configuracion.direccion) {
-            headerInfo['direccion'] = this.direccion.nombre
+            codeHeader.line(this.structureData.header.direccion)
         }
 
-        if (this.esContable(data)) {
-            // console.log('img', img)
-            this.viewLogo = true
-            if (data.documento.sunat.codigo === 1) {
-                tableDatos.push(['RUC', data.cliente.ruc + ''])
-            } else {
-                tableDatos.push(['DNI', , data.cliente.dni])
-            }
-            tableDatos.push(['RAZON', data.cliente.nombre])
-            if (data.cliente.tipo === 'U') {
-                tableDatos.push(['PADRON', data.cliente.referencia])
-            }
-            if (data.cliente.direccion) {
-                tableDatos.push(['DIRECCION', data.cliente.direccion])
-            }
-            if (data.observacion) {
-                tableDatos.push(['OBSERVACION', data.observacion])
-            }
-
-            if (headerInfo['nombreEmpresa']) {
-                codeHeader.line(headerInfo['nombreEmpresa'])
-            }
-
-            if (headerInfo['ruc']) {
-                codeHeader.line('RUC: ' + headerInfo['ruc'])
-            }
-
-            if (headerInfo['direccion']) {
-                codeHeader.line(headerInfo['direccion'])
-            }
-            if (this.viewLogo) {
-                codeHeader
-                    .image(this.img, 560, 184, 'atkinson', 255)
-                    .emptyLine(2)
-            }
-        } else {
-            tableDatos.push(['DNI', data.cliente.dni])
-            tableDatos.push(['NOMBRE', data.cliente.nombre])
-            if (data.conductor) {
-                tableDatos.push(['CONDUCTOR', data.conductor.codigo])
-            }
+        if (this.structureData.header.viewLogo) {
+            codeHeader.image(this.img, 560, 184, 'atkinson', 255).emptyLine(2)
         }
 
         codeHeader
             .bold(true)
             .line(data.documento.nombre)
-            .line(data.serie + '- "' + data.numero)
+            .line(data.serie + '-' + data.numero)
             .bold(false)
 
             .emptyLine(1)
@@ -164,63 +316,51 @@ export class PrintHtmlListComponent implements OnInit {
                 [
                     {
                         width: 11,
-                        align: 'left',
-                        bold: true
+                        align: 'left'
                     },
                     {
                         align: 'left'
                     }
                 ],
-                [...tableDatos]
+                [...this.structureData.header.tableDatos]
             )
             .printLineFull('-')
 
         return codeHeader
     }
 
-    async generateCodeBody (
-        data: ReciboDetalleModel
-    ): Promise<ThermalPrinterEncoder> {
-        const codeBodyGenerate = new ThermalPrinterEncoder()
-        const deudas = []
-        const items = data.items.map((item: ItemModel) => {
-            console.log(item)
-            console.log(item?.stringRecibo)
-            console.log(item?.cantidad)
-
-            return [item?.stringRecibo, item.cantidad + '', item.precio + '']
-        })
+    async generateCodeBody (data: ReciboDetalleModel): Promise<EscPosEncoder> {
+        const codeBodyGenerate = new EscPosEncoder()
 
         codeBodyGenerate
             .bold(true)
             .table(
                 [
-                    { width: 28, align: 'left' },
-                    { width: 10, align: 'right' },
+                    { width: 38, align: 'left' },
                     { width: 10, align: 'right' }
                 ],
-                [['DESCRIPCION', 'CANT', 'IMPORTE']]
+                [['DESCRIPCION', 'IMPORTE']]
             )
             .bold(false)
             .table(
                 [
-                    { width: 28, align: 'left' },
-                    { width: 10, align: 'right' },
+                    { width: 38, align: 'left' },
+                    // { width: 10, align: 'right' },
                     { width: 10, align: 'right' }
                 ],
-                [...items]
+                [...this.structureData.body.items]
             )
             .emptyLine(1)
-        if (this.esContable(data)) {
+        if (
+            this.structureData.body.grav.length > 0 &&
+            this.structureData.body.iva.length > 0
+        ) {
             codeBodyGenerate.table(
                 [
                     { width: 36, marginRight: 2, align: 'right' },
                     { width: 10, align: 'right' }
                 ],
-                [
-                    ['GRAV.', this.toCurrency(data?.base, data.moneda)],
-                    ['IVA', this.toCurrency(data?.igv, data.moneda)]
-                ]
+                [this.structureData.body.grav, this.structureData.body.iva]
             )
         }
         codeBodyGenerate.table(
@@ -228,116 +368,111 @@ export class PrintHtmlListComponent implements OnInit {
                 { width: 36, marginRight: 2, align: 'right' },
                 { width: 10, align: 'right' }
             ],
-            [['TOTAL', this.toCurrency(data?.total, data.moneda)]]
+            [this.structureData.body.total]
         )
 
-        if (!this.esContable(data)) {
-            if (data.deudas.length > 0) {
-                console.log('data.deudas', data.deudas)
-                codeBodyGenerate
-                    .printLineFull('-')
-                    // .line('DEUDAS')
-                    .table(
-                        [
-                            { width: 24, align: 'left' },
-                            { width: 12, align: 'right' },
-                            { width: 12, align: 'right' }
-                        ],
-                        [
-                            ['DEUDA', 'INICIAL', 'SALDO'],
-                            ...data.deudas.map(deuda => {
-                                console.log('deuda', deuda)
-                                return [
-                                    deuda.nombre + this.shortDia(deuda.dia),
-                                    this.toCurrency(deuda.inicial, data.moneda),
-                                    this.toCurrency(deuda.saldo, data.moneda)
-                                ]
-                            })
-                        ]
-                    )
-            }
-            if (data.fondos.length > 0) {
-                codeBodyGenerate
-                    .printLineFull('-')
-                    // .line('FONDOS')
-                    .table(
-                        [
-                            { width: 28, align: 'left' },
-                            { width: 20, align: 'right' }
-                        ],
-                        [
-                            ['FONDO', 'TOTAL'],
-                            ...data.fondos.map(fondo => {
-                                return [
-                                    fondo.nombre,
-                                    this.toCurrency(fondo.total, data.moneda)
-                                ]
-                            })
-                        ]
-                    )
-            }
-            if (true) {
-                codeBodyGenerate
-                    .printLineFull('-')
-                    // .line('SALDO')
-                    .table(
-                        [
-                            { width: 28, align: 'left' },
-                            { width: 20, align: 'right' }
-                        ],
-                        [
-                            [
-                                'EN EFECTIVO',
-                                (data.total - data.saldo).toFixed(2)
-                            ],
-                            ['AL CREDITO', data.saldo.toFixed(2) + '']
-                        ]
-                    )
-                    .emptyLine(7)
+        if (this.structureData.body.fondos.length > 0) {
+            codeBodyGenerate
+                .printLineFull('-')
+                // .line('FONDOS')
+                .table(
+                    [
+                        { width: 28, align: 'left' },
+                        { width: 20, align: 'right' }
+                    ],
+                    [...this.structureData.body.fondos]
+                )
+        }
+        if (this.structureData.body.deudas.length > 0) {
+            console.log('data.deudas', data.deudas)
+            codeBodyGenerate
+                .printLineFull('-')
+                // .line('DEUDAS')
+                .table(
+                    [
+                        { width: 24, align: 'left' },
+                        { width: 12, align: 'right' },
+                        { width: 12, align: 'right' }
+                    ],
+                    [...this.structureData.body.deudas]
+                )
+        }
 
-                    // poner una liena para su firma centrado y la fecha y abajo firma y dni
-                    .align('center')
-                    .line('______________________________')
-                    .line('FIRMA Y DNI')
-            }
+        if (this.structureData.body.saldo.length > 0) {
+            codeBodyGenerate
+                .printLineFull('-')
+                // .line('SALDO')
+                .table(
+                    [
+                        { width: 28, align: 'left' },
+                        { width: 20, align: 'right' }
+                    ],
+                    [...this.structureData.body.saldo]
+                )
+                .emptyLine(4)
+
+                // poner una liena para su firma centrado y la fecha y abajo firma y dni
+                .align('center')
+                .line('______________________________')
+                .line('FIRMA Y DNI')
         }
 
         return codeBodyGenerate
     }
 
-    async generateCodeFooter (
-        data: ReciboDetalleModel
-    ): Promise<ThermalPrinterEncoder> {
-        const codeFooterGenerate = new ThermalPrinterEncoder()
+    async generateCodeFooter (data: ReciboDetalleModel): Promise<EscPosEncoder> {
+        const codeFooterGenerate = new EscPosEncoder()
+        codeFooterGenerate.align('left')
 
-        const qrInformation = {
-            ruc: data.cliente.codigo,
-            tipo: data.documento.nombre,
-            serie: data.serie,
-            numero: data.numero,
-            total: data.total,
-            igv: data.igv
+        if (this.structureData.footer.totalLetras) {
+            codeFooterGenerate.line(this.structureData.footer.totalLetras)
+        }
+        if (this.structureData.footer.pago) {
+            codeFooterGenerate.line(this.structureData.footer.pago)
         }
 
-        codeFooterGenerate
-            .emptyLine(2)
+        codeFooterGenerate.align('center')
 
-            .align('center')
-            .line('Representacion impresa de la factura electronica')
-            .line('Para consultar el documento visite')
-            .line('https://www.tcontur.com')
-            .qrcode(JSON.stringify(qrInformation), 1, 4, 'm')
+        if (this.ruc) {
+            codeFooterGenerate.qrcode(this.structureData.footer.qr, 1, 4, 'm')
+        }
 
-            // .qrcode('https://nielsleenheer.com' + data.numero)
-            .cut()
+        codeFooterGenerate.emptyLine(1).line(this.structureData.footer.footer)
+        if (this.anulado) {
+            codeFooterGenerate
+                .emptyLine(1)
+                .line('****** ANULADO ******')
+                .line(
+                    `H.IMP: ${DateTime.now().toFormat('yyyy-MM-dd HH:mm:ss')}`
+                )
+        }
+        if (this.reimprimir) {
+            codeFooterGenerate
+
+                // para imprimir tildes
+                .codepage('cp437')
+
+                .emptyLine(1)
+                .line('****** REIMPRESIÓN ******')
+                .line(
+                    `H.IMP: ${DateTime.now().toFormat(
+                        'yyyy-MM-dd HH:mm:ss'
+                    )} ${this.user.username.toUpperCase()}`
+                )
+        }
+        codeFooterGenerate.line(`Sistema de Gestion TCONTUR`)
+
+        // .line('Representacion impresa de la factura electronica')
+        // .line('Para consultar el documento visite')
+        // .line('https://www.tcontur.com')
+
+        // .qrcode('https://nielsleenheer.com' + data.numero)
+        codeFooterGenerate.cut()
 
         return codeFooterGenerate
     }
 
     async getTicketToUnicode (data: ReciboDetalleModel) {
-        // info for tables or code
-
-        // instance of coder
         if (this.img.complete) {
             const codeHeader = await this.generateCodeHeader(data)
             const codeBody = await this.generateCodeBody(data)
@@ -346,18 +481,9 @@ export class PrintHtmlListComponent implements OnInit {
             const header: Uint8Array = new Uint8Array(codeHeader.encode())
             const body: Uint8Array = new Uint8Array(codeBody.encode())
             const footer: Uint8Array = new Uint8Array(codeFooter.encode())
-
-            // header.set(codeHeader.encode())
-            // body.set(codeBody.encode())
-            // footer.set(codeFooter.encode())
-
             console.log('header', header)
             console.log('body', body)
             console.log('footer', footer)
-
-            // console.log('codeHeader', codeHeader.encode())
-            // console.log('codeBody', codeBody.encode())
-            // console.log('codeFooter', codeFooter.encode())
 
             const combinedCode = new Uint8Array(
                 header.byteLength + body.byteLength + footer.byteLength
@@ -366,50 +492,23 @@ export class PrintHtmlListComponent implements OnInit {
             combinedCode.set(body, header.byteLength)
             combinedCode.set(footer, header.byteLength + body.byteLength)
 
-            console.log('combinedCode', combinedCode)
             await this.sendDataToDevice(combinedCode)
         }
     }
 
     async sendDataToDevice (data: Uint8Array): Promise<void> {
-        // await this.initializeDevice() // Asegúrate de que el dispositivo esté listo
-
-        console.log('data', data)
         await this.deviceService.write(data)
     }
-    transformDate (date: Date): string {
+    transformDate (date: DateTime): string {
         // 2023-07-27T10:25:20.958149-05:00"
         if (!date) return ''
-        const fecha = new Date(date)
-        //  esta fecha lucira asi 27/7/2023 con hora 10:25:20
-        return `${fecha.getDate()}/${
-            fecha.getMonth() + 1
-        }/${fecha.getFullYear()}  ${fecha.getHours()}:${fecha.getMinutes()}:${fecha.getSeconds()}`
+        // const fecha = new Date(date.toISO())
+        //  esta fecha lucira asi: 27/7/2023 10:25:20
+        console.log('date', date)
+        console.log('date.toFormat', date.toFormat('yyyy-MM-dd HH:mm:ss'))
+        return date.toFormat('yyyy-MM-dd HH:mm:ss')
     }
 
-    // async print () {
-    //     console.log(this.img.complete, 'valro de la imagen completada')
-    //     try {
-    //         if (!this.device) {
-    //             await this.requestDevice()
-    //             if (this.recibo) {
-    //                 this.getTicketToUnicode(this.recibo)
-    //             }
-
-    //             console.log('No selected device')
-    //             return
-    //         } else if (this.recibo) {
-    //             this.getTicketToUnicode(this.recibo)
-    //         }
-    //     } catch (error) {
-    //         console.log(error)
-    //     }
-    // }
-
-    // public async requestDevice (): Promise<void> {
-    //     await this.deviceConnectService.requestDevice()
-    //     await this.deviceConnectService.initializeDevice()
-    // }
     private esContable (data: ReciboDetalleModel) {
         return (
             data.documento?.sunat?.codigo === 1 ||

@@ -1,14 +1,11 @@
 import { Injectable } from '@angular/core'
-import { dataTicket } from './data'
 import { FuseMockApiService } from '@fuse/lib/mock-api'
 import { cloneDeep } from 'lodash-es'
-import { dataTicket2 } from './data2'
-import { dataTicket3 } from './data3'
-import { dataTicket4 } from './data4'
+import { dataGeocercas } from './data'
 
 @Injectable({ providedIn: 'root' })
-export class TicketMockApi {
-    private _ticket: any = dataTicket3
+export class GeocercaMockApi {
+    private _ticket: any = dataGeocercas
 
     constructor (private _fuseMockApiService: FuseMockApiService) {
         // Register Mock API handlers
@@ -23,7 +20,7 @@ export class TicketMockApi {
         // @ Ticket - GET
         // -----------------------------------------------------------------------------------------------------
         this._fuseMockApiService
-            .onGet('api/apps/ticket')
+            .onGet('api/apps/geocerca')
             .reply(() => [200, cloneDeep(this._ticket)])
     }
 }

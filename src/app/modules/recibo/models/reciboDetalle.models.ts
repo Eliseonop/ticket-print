@@ -15,7 +15,7 @@ import {
     IReciboDetalle,
     IUser,
     IConductor
-} from './ticket.interface'
+} from './reciboDetalle.interface'
 
 export class ReciboDetalleModel {
     id: number
@@ -31,7 +31,7 @@ export class ReciboDetalleModel {
     documento: DocumentoModel
     efectivo: boolean
     fondos: any[]
-    hora: Date
+    hora: DateTime
     igv: number
     items: ItemModel[]
     inafecta: number
@@ -65,7 +65,7 @@ export class ReciboDetalleModel {
             : null
         this.efectivo = data.efectivo
         this.fondos = data.fondos
-        this.hora = data.hora
+        this.hora = DateTime.fromISO(data.hora)
         this.igv = data.igv
         this.items = data.items.map(item => new ItemModel(item))
         this.inafecta = data.inafecta
@@ -80,10 +80,36 @@ export class ReciboDetalleModel {
         this.ser_num = data.ser_num
         this.total = data.total
         this.usuario = data.usuario
+        console.log(this.hora)
     }
-
-    get monedaTextos () {
-        return this.moneda ? this.moneda.nombre : ''
+    get monedaSingular (): string {
+        return this.moneda.id === 1 ? 'SOL' : 'DÓLAR'
+    }
+    get monedaPlural (): string {
+        return this.moneda.id === 1 ? 'SOLES' : 'DÓLARES'
+    }
+    get monedaTextos (): { plural: string; singular: string } {
+        return { plural: this.monedaPlural, singular: this.monedaSingular }
+    }
+    getFooter (user: UserModel, reimprimir: boolean): string {
+        let footer = `H.PROC: ${this.hora.toFormat(
+            'yyyy-MM-dd HH:mm:ss'
+        )} ID: ${this.id} ${this.caja.usuario.nombre.toUpperCase()}`
+        if (this.anulado) {
+            footer += `
+            ****** ANULADO ******
+            H.IMP: ${DateTime.now().toFormat('yyyy-MM-dd HH:mm:ss')}`
+        }
+        if (reimprimir) {
+            footer += `
+            ****** REIMPRESIÓN ******
+            H.IMP: ${DateTime.now().toFormat(
+                'yyyy-MM-dd HH:mm:ss'
+            )} ${user.username.toUpperCase()}`
+        }
+        footer += `
+              Sistema de Gestion TCONTUR`
+        return footer
     }
 }
 
@@ -291,7 +317,7 @@ export class ItemModel {
     id: number
     base: number
     cantidad: number
-    deuda: null
+    deuda: DeudaModel
     efectivo: boolean
     igv: number
     inafecta: number
@@ -309,7 +335,7 @@ export class ItemModel {
         this.id = data.id
         this.base = data.base
         this.cantidad = data.cantidad
-        this.deuda = data.deuda
+        this.deuda = data.deuda ? new DeudaModel(data.deuda) : null
         this.efectivo = data.efectivo
         this.igv = data.igv
         this.inafecta = data.inafecta
@@ -325,7 +351,13 @@ export class ItemModel {
     }
 
     get stringRecibo () {
-        return this.producto ? this.producto.nombre : ''
+        return this.producto
+            ? this.cantidad +
+                  ' ' +
+                  this.producto?.nombre +
+                  ' ' +
+                  (this.deuda?.dia || '')
+            : ''
     }
 }
 

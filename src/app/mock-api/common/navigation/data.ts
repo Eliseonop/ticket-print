@@ -23,19 +23,13 @@ export const defaultNavigation: FuseNavigationItem[] = [
         icon: 'heroicons_outline:chart-pie',
         link: '/print-html'
     },
+
     {
-        id: 'thermal-print',
-        title: 'Thermal Print',
+        id: 'salida',
+        title: 'Salida',
         type: 'basic',
         icon: 'heroicons_outline:chart-pie',
-        link: '/thermal-print'
-    },
-    {
-        id: 'print-esc-buffer',
-        title: 'Print ESC Buffer',
-        type: 'basic',
-        icon: 'heroicons_outline:chart-pie',
-        link: '/print-esc-buffer'
+        link: '/salida'
     }
 ]
 export const compactNavigation: FuseNavigationItem[] = [

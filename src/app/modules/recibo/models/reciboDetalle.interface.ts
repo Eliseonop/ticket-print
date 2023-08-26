@@ -12,7 +12,7 @@ export interface IReciboDetalle {
     documento: IDocumento
     efectivo: boolean
     fondos: any[]
-    hora: Date
+    hora: string
     igv: number
     items: IItem[]
     inafecta: number
@@ -140,7 +140,7 @@ export interface IItem {
     id: number
     base: number
     cantidad: number
-    deuda: null
+    deuda: IDeuda
     efectivo: boolean
     igv: number
     inafecta: number

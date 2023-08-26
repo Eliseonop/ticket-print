@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core'
 import {
     ReciboDetalleModel,
     ReciboModel
-} from 'app/modules/recibo/models/ticket.models'
+} from 'app/modules/recibo/models/reciboDetalle.models'
 
 @Component({
     selector: 'app-print-html-preview',
@@ -19,10 +19,10 @@ export class PrintHtmlPreviewComponent {
     //     const widthInPixels = Math.round(paperWidthInInches * dpi)
     //     return `${widthInPixels}px`
     // }
-    mmToPixels (mm: number): string {
-        const pixelsPerMm = 3.78
-        return mm * pixelsPerMm + 'px'
-    }
+    // mmToPixels (mm: number): string {
+    //     const pixelsPerMm = 3.78
+    //     return mm * pixelsPerMm + 'px'
+    // }
     transformDate (date: Date): string {
         // 2023-07-27T10:25:20.958149-05:00"
         const fecha = new Date(date)

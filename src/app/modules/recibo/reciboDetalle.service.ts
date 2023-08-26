@@ -1,14 +1,14 @@
 import { Observable, map } from 'rxjs'
 import { HttpClient } from '@angular/common/http'
 import { Injectable } from '@angular/core'
-import { ReciboDetalleModel } from './models/ticket.models'
-import { IReciboDetalle } from './models/ticket.interface'
+import { ReciboDetalleModel } from './models/reciboDetalle.models'
+import { IReciboDetalle } from './models/reciboDetalle.interface'
 import { ReciboAbstractService } from './recibo.abstract.service'
 
 @Injectable({
     providedIn: 'root'
 })
-export class TicketService extends ReciboAbstractService {
+export class ReciboDetalleService extends ReciboAbstractService {
     url = 'api/apps/ticket'
 
     constructor (private httpClient: HttpClient) {
