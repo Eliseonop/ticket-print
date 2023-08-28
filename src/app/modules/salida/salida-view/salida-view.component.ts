@@ -27,9 +27,9 @@ export class SalidaViewComponent implements OnInit {
     }
     private _user: UserModel = {
         id: 123,
-        cargo: 'string',
-        nombre: 'string',
-        username: 'string'
+        cargo: 'Administrador',
+        nombre: 'Administrador',
+        username: 'Administrador'
     }
     get user (): UserModel {
         return this._user
@@ -281,7 +281,7 @@ export class SalidaViewComponent implements OnInit {
                 .underline(1)
                 .bold(false)
                 .underline(true)
-
+                .underline(2)
                 .table(
                     [
                         {
@@ -314,6 +314,7 @@ export class SalidaViewComponent implements OnInit {
             codeSalida
                 .emptyLine(1)
                 .align('center')
+                .bold(true)
                 .size(3)
                 .line(this.structureData.body.textLiqTitle)
         }
@@ -322,16 +323,20 @@ export class SalidaViewComponent implements OnInit {
             codeSalida.size(3).table(
                 [
                     {
-                        width: 12
+                        width: 12,
+                        align: 'left'
                     },
                     {
-                        width: 12
+                        width: 12,
+                        align: 'left'
                     },
                     {
-                        width: 12
+                        width: 12,
+                        align: 'right'
                     },
                     {
-                        width: 12
+                        width: 12,
+                        align: 'right'
                     }
                 ],
                 [...this.structureData.body.tablePadHora]
@@ -340,9 +345,11 @@ export class SalidaViewComponent implements OnInit {
 
         if (this.structureData.body.tableSuministros) {
             codeSalida
+                .bold(false)
                 .align('left')
                 .size(3)
                 .underline(true)
+                .underline(2)
                 .table(
                     [
                         {
@@ -419,6 +426,17 @@ export class SalidaViewComponent implements OnInit {
                     ],
                     [...this.structureData.body.tableSuministros]
                 )
+        }
+
+        if (this.structureData.footer.textHoraUser) {
+            codeSalida
+                .underline(false)
+                .emptyLine(1)
+                .align('center')
+                .size(3)
+                .line(this.structureData.footer.textHoraUser)
+                .line(this.structureData.footer.textSalida)
+                .line(this.structureData.footer.textData)
         }
 
         codeSalida
