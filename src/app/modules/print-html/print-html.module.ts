@@ -6,6 +6,7 @@ import { PrintHtmlRoutes } from './print-html.routes'
 import { RouterModule } from '@angular/router'
 import { MaterialModule } from '../utils/shared/material.module'
 import { NgxPrintElementModule } from 'ngx-print-element'
+import { QrcodeModule } from 'qrcode-angular'
 import { PrintHtmlPreviewComponent } from './print-html-preview/print-html-preview.component'
 @NgModule({
     declarations: [PrintHtmlListComponent, PrintHtmlPreviewComponent],
@@ -13,7 +14,8 @@ import { PrintHtmlPreviewComponent } from './print-html-preview/print-html-previ
         RouterModule.forChild(PrintHtmlRoutes),
         CommonModule,
         MaterialModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        QrcodeModule
     ]
 })
 export class PrintHtmlModule {}

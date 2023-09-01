@@ -24,7 +24,9 @@
             Print
         </button>
 
-        <app-print-html-preview [recibo]="recibo"></app-print-html-preview>
+        <app-print-html-preview
+            [structureData]="structureData"
+        ></app-print-html-preview>
 
         <div>
             <p *ngIf="isConnected | async">Device connected</p>

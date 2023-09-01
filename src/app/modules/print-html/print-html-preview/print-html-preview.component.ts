@@ -3,6 +3,7 @@ import {
     ReciboDetalleModel,
     ReciboModel
 } from 'app/modules/recibo/models/reciboDetalle.models'
+import { StructureData } from '../models/structureData.interface'
 
 @Component({
     selector: 'app-print-html-preview',
@@ -11,7 +12,7 @@ import {
 })
 export class PrintHtmlPreviewComponent {
     @Input()
-    recibo: ReciboDetalleModel
+    structureData: StructureData
 
     // calculateContainerWidth (printerType: string): string {
     //     const paperWidthInInches = printerType === 'pos-80' ? 3.15 : 2.28 // Adjust values for different printer types

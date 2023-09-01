@@ -8,7 +8,7 @@ import { dataTicket4 } from './data4'
 
 @Injectable({ providedIn: 'root' })
 export class TicketMockApi {
-    private _ticket: any = dataTicket3
+    private _ticket: any = dataTicket4
 
     constructor (private _fuseMockApiService: FuseMockApiService) {
         // Register Mock API handlers

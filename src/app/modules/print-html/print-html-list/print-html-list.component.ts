@@ -26,6 +26,7 @@ export class PrintHtmlListComponent implements OnInit {
     img = new Image()
     recibo: ReciboDetalleModel
     // encoder = new ThermalPrinterEncoder()
+
     viewLogo = false
     // {
     //     language: 'esc-pos',
@@ -66,6 +67,9 @@ export class PrintHtmlListComponent implements OnInit {
             nombreEmpresa: null,
             ruc: null,
             direccion: null,
+            documento: null,
+            serie: null,
+            numero: null,
             tableDatos: []
         },
         body: {
@@ -85,7 +89,8 @@ export class PrintHtmlListComponent implements OnInit {
             anulado: false,
             reimprimir: false,
             user: null,
-            empresa: null
+            empresa: null,
+            ahora: null
         }
     }
     constructor (
@@ -145,7 +150,9 @@ export class PrintHtmlListComponent implements OnInit {
         this.structureData.header.nombreEmpresa = this.empresa.nombre
         this.structureData.header.ruc = this.ruc.nombre
         this.structureData.header.direccion = this.direccion.nombre
-
+        this.structureData.header.documento = recibo.documento?.nombre
+        this.structureData.header.serie = recibo?.serie
+        this.structureData.header.numero = recibo?.numero
         if (this.esContable(recibo)) {
             // es contable header
             this.structureData.header.viewLogo = true
@@ -285,6 +292,9 @@ export class PrintHtmlListComponent implements OnInit {
         this.structureData.footer.reimprimir = this.reimprimir
         this.structureData.footer.user = this.user.username.toUpperCase()
         this.structureData.footer.empresa = 'Sistema de Gestion TCONTUR'
+        this.structureData.footer.ahora = DateTime.now().toFormat(
+            'yyyy-MM-dd HH:mm:ss'
+        )
     }
 
     async generateCodeHeader (data: ReciboDetalleModel): Promise<EscPosEncoder> {
@@ -304,10 +314,17 @@ export class PrintHtmlListComponent implements OnInit {
             codeHeader.image(this.img, 560, 184, 'atkinson', 255).emptyLine(2)
         }
 
+        console.log('data.documento.nombre', data.documento?.nombre)
+        console.log('data.serie', data?.serie)
+        console.log('data.numero', data?.numero)
         codeHeader
             .bold(true)
-            .line(data.documento.nombre)
-            .line(data.serie + '-' + data.numero)
+            .line(this.structureData.header?.documento)
+            .line(
+                this.structureData.header.serie +
+                    '-' +
+                    this.structureData.header.numero
+            )
             .bold(false)
 
             .emptyLine(1)
@@ -442,9 +459,7 @@ export class PrintHtmlListComponent implements OnInit {
             codeFooterGenerate
                 .emptyLine(1)
                 .line('****** ANULADO ******')
-                .line(
-                    `H.IMP: ${DateTime.now().toFormat('yyyy-MM-dd HH:mm:ss')}`
-                )
+                .line(`H.IMP: ${this.structureData.footer?.ahora}`)
         }
         if (this.reimprimir) {
             codeFooterGenerate
@@ -455,9 +470,7 @@ export class PrintHtmlListComponent implements OnInit {
                 .emptyLine(1)
                 .line('****** REIMPRESIÓN ******')
                 .line(
-                    `H.IMP: ${DateTime.now().toFormat(
-                        'yyyy-MM-dd HH:mm:ss'
-                    )} ${this.user.username.toUpperCase()}`
+                    `H.IMP: ${this.structureData.footer?.ahora} ${this.structureData.footer?.user}`
                 )
         }
         codeFooterGenerate.line(`Sistema de Gestion TCONTUR`)

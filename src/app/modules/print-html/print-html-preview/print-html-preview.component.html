@@ -1,41 +1,145 @@
-<div class="w-[400px] font-mono break-all" [style.width]="" *ngIf="recibo">
-    <div class="receipt p-2 border rounded bg-gray-100 text-md">
-        <div>
-            <img src="assets/images/tcontur.jpg" class="max-w-full" />
+!Vista es referencial de impresion
+<div class="w-100 font-mono break-all" [style.width]="" *ngIf="structureData">
+    <div class="receipt p-2 border rounded bg-white text-md">
+        <div class="text-center">
+            <div>
+                {{ structureData.header?.nombreEmpresa }}
+            </div>
+            <div>RUC: {{ structureData.header?.ruc }}</div>
+            <div>
+                {{ structureData.header?.direccion }}
+            </div>
+        </div>
+        <div *ngIf="structureData.header?.viewLogo">
+            <img src="assets/images/tcontur.jpg" class="max-w-full h-28" />
         </div>
         <div class="my-4"></div>
 
         <div class="text-center font-bold">
-            {{ recibo.documento.nombre }}
+            {{ structureData.header?.documento }}
         </div>
         <div class="text-center font-bold">
-            {{ recibo.serie + '- "' + recibo.numero }}
+            {{
+                structureData.header?.serie +
+                    '- ' +
+                    structureData.header?.numero
+            }}
         </div>
+
         <!-- linea en blanco con atailwinds -->
         <div class="my-4"></div>
         <div class="flex flex-col text-md">
-            <div class="">
-                <span class="w-20 inline-block">FECHA</span>
-                <span>{{ transformDate(recibo?.hora) }}</span>
-            </div>
-            <div class="">
-                <span class="w-20 inline-block">RUC</span>
-                <span>{{ recibo?.cliente?.ruc }}</span>
-            </div>
-            <div class=" ">
-                <span class="w-20 inline-block">PADRON</span>
-                <span class="">{{ recibo?.cliente?.padron }}</span>
-            </div>
-            <div class="">
-                <span class="w-18 inline-block">DIRECCION</span>
-                <span class="">
-                    {{ recibo?.cliente?.direccion }}
-                </span>
+            <div *ngFor="let innerArray of structureData.header?.tableDatos">
+                <span class="w-20 inline-block">{{ innerArray[0] }}</span>
+                <span>{{ innerArray[1] }}</span>
             </div>
             <span>------------------------------------------------</span>
-            <div class="qrcode mt-4 text-center">
-                <img src="qrcode-image.png" alt="QR Code" class="max-w-full" />
-                <p>Scan QR Code for details</p>
+        </div>
+        <div>
+            <div class="flex flex-col text-md">
+                <div class="flex justify-between">
+                    <div class="">DESCRIPCION</div>
+                    <div class="text-right">IMPORTE</div>
+                </div>
+                <div
+                    *ngFor="let innerArray of structureData.body.items"
+                    class="flex justify-between"
+                >
+                    <div class="">
+                        {{ innerArray[0] }}
+                    </div>
+                    <div class="text-right">
+                        {{ innerArray[1] }}
+                    </div>
+                </div>
+            </div>
+            <div class="my-4"></div>
+
+            <div class="text-right font-bold mr-6">
+                <div>
+                    <div class="w-28 inline-block">GRAV.</div>
+                    <div class="w-20 inline-block">
+                        {{ structureData.body?.grav[1] }}
+                    </div>
+                </div>
+                <div>
+                    <div class="w-28 inline-block">IVA</div>
+                    <div class="w-20 inline-block">
+                        {{ structureData.body?.iva[1] }}
+                    </div>
+                </div>
+                <div>
+                    <div class="w-28 inline-block">TOTAL</div>
+                    <div class="w-20 inline-block">
+                        {{ structureData.body?.total[1] }}
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="this.structureData.body.fondos.length > 0">
+                <div>------------------------------------------------</div>
+                <div class="flex flex-col text-md">
+                    <div
+                        *ngFor="let innerArray of structureData.body.fondos"
+                        class="flex justify-between"
+                    >
+                        <div class="">
+                            {{ innerArray[0] }}
+                        </div>
+                        <div class="text-right">
+                            {{ innerArray[1] }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="this.structureData.body.deudas.length > 0">
+                <div>------------------------------------------------</div>
+                <div class="flex flex-col text-md">
+                    <div
+                        *ngFor="let innerArray of structureData.body.deudas"
+                        class="flex justify-between"
+                    >
+                        <div class="">
+                            {{ innerArray[0] }}
+                        </div>
+                        <div class="text-right">
+                            {{ innerArray[1] }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div>
+                    {{ structureData.footer.totalLetras }}
+                </div>
+                <div>
+                    {{ structureData.footer?.pago }}
+                </div>
+                <div class="my-4"></div>
+                <div class="flex items-center justify-center">
+                    <qrcode
+                        [value]="structureData.footer.qr"
+                        size="100"
+                    ></qrcode>
+                </div>
+                <div class="my-4"></div>
+                <div class="text-center">{{ structureData.footer.footer }}</div>
+                <div class="my-4"></div>
+                <div *ngIf="anulado" class="text-center">
+                    <div>****** ANULADO ******</div>
+                    <div>
+                        H.IMP:
+                        {{ ahora }}
+                    </div>
+                </div>
+                <div *ngIf="true" class="text-center">
+                    <div>****** REIMPRESIÓN ******</div>
+                    <div>
+                        H.IMP:
+                        {{ structureData.footer.ahora }}
+                        {{ structureData.footer?.user }}
+                    </div>
+                </div>
+                <div class="text-center">Sistema de Gestion TCONTUR</div>
             </div>
         </div>
     </div>
