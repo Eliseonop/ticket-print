@@ -24,6 +24,7 @@
         "@angular/platform-browser": "16.0.3",
         "@angular/platform-browser-dynamic": "16.0.3",
         "@angular/router": "16.0.3",
+        "@manekinekko/angular-web-bluetooth": "^15.0.0",
         "@manhnd/esc-pos-encoder": "^1.0.25",
         "@ngneat/transloco": "4.2.7",
         "@types/web-bluetooth": "^0.0.17",

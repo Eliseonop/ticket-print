@@ -78,12 +78,18 @@ export class DeviceConnectService {
     }
 
     private listenForUsbConnections (): void {
-        navigator.usb.addEventListener('disconnect', () => {
-            this.isConnected.next(false)
-        })
-        navigator.usb.addEventListener('connect', () => {
-            this.initializeDevice() // Actualizar dispositivos cuando se conecte
-        })
+        if (navigator.usb) {
+            navigator.usb.addEventListener('disconnect', () => {
+                this.isConnected.next(false)
+            })
+            navigator.usb.addEventListener('connect', () => {
+                this.initializeDevice() // Actualizar dispositivos cuando se conecte
+            })
+        } else {
+            console.error(
+                'La API navigator.usb no está disponible en este navegador.'
+            )
+        }
     }
 
     public async write (data: Uint8Array): Promise<void> {

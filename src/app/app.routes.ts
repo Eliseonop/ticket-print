@@ -145,6 +145,13 @@ export const appRoutes: Route[] = [
                     import('app/modules/salida/salida.module').then(
                         m => m.SalidaModule
                     )
+            },
+            {
+                path: 'blue-print',
+                loadChildren: () =>
+                    import(
+                        'app/modules/print-bluetooth/print-bluetooth.module'
+                    ).then(m => m.PrintBluetoothModule)
             }
         ]
     }
