@@ -5,3 +5,7 @@
 <div>
     {{ docs | json }}
 </div>
+
+<div>
+    {{ device ? device : ('' | json) }}
+</div>

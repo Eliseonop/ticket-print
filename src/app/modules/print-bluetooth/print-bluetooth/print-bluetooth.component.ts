@@ -10,25 +10,13 @@ import { Observable, map } from 'rxjs'
 })
 export class PrintBluetoothComponent implements OnInit {
     private readonly PRINT_SERVICE_UUID = '000018f0-0000-1000-8000-00805f9b34fb'
-    private device?: BluetoothDevice
+    device?: BluetoothDevice
 
     docs: any
     constructor () {}
 
     ngOnInit (): void {
         console.log(this.isSupported)
-        navigator.permissions
-            .query({
-                name: 'push'
-            })
-            .then(result => {
-                // if (result.devices.length == 1) {
-                //   return result.devices[0];
-                // } else {
-                //   throw new DOMException("Lost permission", "NotFoundError");
-                //
-                console.log(result)
-            })
     }
 
     public get isSupported (): boolean {
@@ -56,8 +44,8 @@ export class PrintBluetoothComponent implements OnInit {
         return new Observable(observer => {
             navigator.bluetooth
                 .requestDevice({
-                    acceptAllDevices: true,
-                    optionalServices: ['battery_service']
+                    acceptAllDevices: true
+                    // optionalServices: ['battery_service']
                 })
                 .then((result: BluetoothDevice) => {
                     this.device = result
