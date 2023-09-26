@@ -96,8 +96,7 @@
                             "browserTarget": "fuse:build:development",
                             "ssl": true,
                             "sslKey": "localhost.key",
-                            "sslCert": "localhost.crt",
-                            "disableHostCheck": true
+                            "sslCert": "localhost.crt"
                         }
                     },
                     "defaultConfiguration": "development"
