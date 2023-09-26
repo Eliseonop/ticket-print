@@ -43,6 +43,7 @@
         "ngx-print-element": "^2.1.0",
         "ngx-printer": "^1.4.0",
         "ngx-quill": "22.0.0",
+        "office-addin-dev-certs": "^1.11.6",
         "pdfmake": "^0.2.7",
         "perfect-scrollbar": "1.5.5",
         "print-js": "^1.6.0",

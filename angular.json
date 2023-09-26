@@ -93,7 +93,11 @@
                             "browserTarget": "fuse:build:production"
                         },
                         "development": {
-                            "browserTarget": "fuse:build:development"
+                            "browserTarget": "fuse:build:development",
+                            "ssl": true,
+                            "sslKey": "localhost.key",
+                            "sslCert": "localhost.crt",
+                            "disableHostCheck": true
                         }
                     },
                     "defaultConfiguration": "development"
@@ -128,6 +132,6 @@
         }
     },
     "cli": {
-      "analytics": false
+        "analytics": false
     }
 }

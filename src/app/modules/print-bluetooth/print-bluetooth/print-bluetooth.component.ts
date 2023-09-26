@@ -44,9 +44,7 @@ export class PrintBluetoothComponent implements OnInit {
         return new Observable(observer => {
             navigator.bluetooth
                 .requestDevice({
-                    acceptAllDevices: true,
-                    filters: [{ services: [0x1800, 0x1801] }]
-                    // optionalServices: ['battery_service']
+                    acceptAllDevices: true
                 })
                 .then((result: BluetoothDevice) => {
                     this.device = result
