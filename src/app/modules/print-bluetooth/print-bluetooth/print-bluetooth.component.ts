@@ -13,6 +13,7 @@ export class PrintBluetoothComponent implements OnInit {
     device?: BluetoothDevice
 
     docs: any
+    error: any
     constructor () {}
 
     ngOnInit (): void {
@@ -32,6 +33,7 @@ export class PrintBluetoothComponent implements OnInit {
             },
             error => {
                 // Maneja los errores aquí
+                this.error = error
                 console.error(
                     'Error al conectar al dispositivo Bluetooth:',
                     error
