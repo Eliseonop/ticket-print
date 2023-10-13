@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog'
 // import ThermalPrinterEncoder from 'thermal-printer-encoder'
 // import ThermalPrinterEncoder from 'esc-pos-encoder'
 import EscPosEncoder from '@manhnd/esc-pos-encoder'
-import { DeviceConnectService } from 'app/modules/print-html/devices-conect.service'
+import { PrintUsbService } from 'app/modules/print-html/print-usb.service'
 import { IMoneda } from 'app/modules/recibo/models/reciboDetalle.interface'
 import {
     ItemModel,
@@ -95,7 +95,7 @@ export class PrintHtmlListComponent implements OnInit {
     }
     constructor (
         private ticketService: ReciboDetalleService,
-        private deviceService: DeviceConnectService,
+        private printUsbService: PrintUsbService,
         private _matDialog: MatDialog
     ) {
         // img.src = `${window.location.origin}/assets/images/nuphar.jpg`
@@ -106,9 +106,9 @@ export class PrintHtmlListComponent implements OnInit {
     preView () {}
 
     ngOnInit (): void {
-        this.deviceService.selectedDevice.subscribe(device => {
-            this.device = device
-        })
+        // this.printUsbService.selectedDevice.subscribe(device => {
+        //     this.device = device
+        // })
 
         this.ticketService
             .getTicketData()
@@ -128,7 +128,7 @@ export class PrintHtmlListComponent implements OnInit {
     }
 
     requestDevice () {
-        this.deviceService.requestDevice()
+        this.printUsbService.requestDevice()
     }
 
     print () {
@@ -137,7 +137,7 @@ export class PrintHtmlListComponent implements OnInit {
             // Realizar la impresión
             this.getTicketToUnicode(this.recibo)
         } else {
-            this.deviceService.requestDevice() // Solicitar dispositivo si no está conectado
+            this.printUsbService.requestDevice() // Solicitar dispositivo si no está conectado
         }
     }
 
@@ -510,7 +510,7 @@ export class PrintHtmlListComponent implements OnInit {
     }
 
     async sendDataToDevice (data: Uint8Array): Promise<void> {
-        await this.deviceService.write(data)
+        await this.printUsbService.write(data)
     }
     transformDate (date: DateTime): string {
         // 2023-07-27T10:25:20.958149-05:00"

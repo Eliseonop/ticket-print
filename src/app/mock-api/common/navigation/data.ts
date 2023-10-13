@@ -37,6 +37,20 @@ export const defaultNavigation: FuseNavigationItem[] = [
         type: 'basic',
         icon: 'heroicons_outline:chart-pie',
         link: '/blue-print'
+    },
+    {
+        id: 'prueba',
+        title: 'Prueba',
+        type: 'basic',
+        icon: 'heroicons_outline:chart-pie',
+        link: '/prueba'
+    },
+    {
+        id: 'print-general',
+        title: 'Print general',
+        type: 'basic',
+        icon: 'heroicons_outline:chart-pie',
+        link: '/print-general'
     }
 ]
 export const compactNavigation: FuseNavigationItem[] = [

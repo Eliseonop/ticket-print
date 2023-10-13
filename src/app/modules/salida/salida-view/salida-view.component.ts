@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core'
-import { DeviceConnectService } from 'app/modules/print-html/devices-conect.service'
 import { SalidaService } from '../salida.service'
 import {
     ConfiguracionesModel,
@@ -10,6 +9,7 @@ import { DateTime } from 'luxon'
 import { UserModel } from 'app/modules/recibo/models/reciboDetalle.models'
 import EscPosEncoder from '@manhnd/esc-pos-encoder'
 import { GeocercaService } from '../geocerca.service'
+import { PrintUsbService } from 'app/modules/print-html/print-usb.service'
 
 @Component({
     selector: 'app-salida-view',
@@ -66,7 +66,7 @@ export class SalidaViewComponent implements OnInit {
         nombre: 'RUTA'
     }
     constructor (
-        private deviceService: DeviceConnectService,
+        private deviceService: PrintUsbService,
         private salidaService: SalidaService,
         private geocercaService: GeocercaService
     ) {}
@@ -75,10 +75,6 @@ export class SalidaViewComponent implements OnInit {
 
     salidaData: SalidaCompletaModel
     ngOnInit () {
-        this.deviceService.selectedDevice.subscribe(device => {
-            this.device = device
-        })
-
         this.geocercaService.getGeocercaData().subscribe(data => {
             console.log('geocercas', data)
             this.geocercas = data

@@ -1,0 +1,32 @@
+<!-- mostrar boton de impresora desabilitado de si typeDevice es null
+    si es usb o bluetooth mostrar el boton de impresora  mas el icono de bluetooth o usb
+
+-->
+
+<div (click)="openModalPrint()">
+    <span *ngIf="printerInfo; else elseTemplate">
+        <button
+            mat-icon-button
+            [matTooltip]="
+                printerInfo?.productName +
+                ' ' +
+                ' está ' +
+                (printerInfo?.estado ? 'conectado' : 'desconectado')
+            "
+        >
+            <mat-icon
+                [ngClass]="{
+                    'text-sky-400': printerInfo?.estado,
+                }"
+                >{{ printerInfo.type }}</mat-icon
+            >
+            <!-- <span class="text-xs">{{ printerInfo.name }}</span> -->
+        </button>
+    </span>
+
+    <ng-template #elseTemplate>
+        <button mat-icon-button matTooltip="Impresora desconectada">
+            <mat-icon>print_disabled</mat-icon>
+        </button>
+    </ng-template>
+</div>

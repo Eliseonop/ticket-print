@@ -1,18 +1,79 @@
-<p>print-bluetooth works!</p>
+<div
+    class="bg-gray-100 p-4 rounded-lg shadow-md flex flex-col w-full justify-center items-center"
+>
+    <!-- ver cuadro de conectado o  no conectado color verde o rojo -->
 
-<button (click)="onConnectBluetooth()">request blue</button>
+    <div class="mb-4 space-y-4">
+        <p class="text-lg font-semibold">Status:</p>
+        <p
+            class="text-2xl font-bold"
+            [ngClass]="{
+                'text-green-500': isConnected | async,
+                'text-red-500': !isConnected | async
+            }"
+        >
+            {{ (isConnected | async) ? 'Conectado' : 'No conectado' }}
+        </p>
 
-<div class="flex flex-col">
-    <div>
-        {{ docs | json }}
-    </div>
+        <p class="text-2xl font-bold mb-4">Print Bluetooth</p>
+        <div class="mb-4">
+            <button
+                class="rounded-md"
+                color="primary"
+                mat-raised-button
+                (click)="onConnectBluetooth()"
+            >
+                Request Bluetooth
+            </button>
+        </div>
+        <div class="mb-4">
+            <p class="text-lg font-semibold">Navegador flag activado:</p>
+            <pre class="bg-white p-2 rounded-lg overflow-auto">{{
+                isSupported | json
+            }}</pre>
+        </div>
 
-    <div>
-        {{ device ? device : ('' | json) }}
-    </div>
+        <div class="mb-4">
+            <p class="text-lg font-semibold">Device:</p>
+            <pre class="bg-white p-2 rounded-lg overflow-auto">{{
+                device ? (device | json) : ('' | json)
+            }}</pre>
+        </div>
 
-    <div>
-        el error
-        {{ error | json }}
+        <div>
+            <p class="text-lg font-semibold">Error:</p>
+            <pre class="bg-white p-2 rounded-lg overflow-auto">{{
+                error | json
+            }}</pre>
+        </div>
+
+        <div>
+            <p class="text-lg font-semibold">Generate print</p>
+            <button
+                class="rounded-md"
+                mat-raised-button
+                color="primary"
+                (click)="generateCode()"
+                [disabled]="!device"
+            >
+                Generate
+            </button>
+        </div>
+        <!-- getDevicesVinculados -->
+        <div class="mb-4 space-y-3">
+            <p class="text-lg font-semibold">Devices vinculados:</p>
+            <button
+                class="rounded-md"
+                color="primary"
+                mat-raised-button
+                (click)="getDevicesVinculados()"
+            >
+                Get devices vinculados
+            </button>
+
+            <pre class="bg-white p-2 rounded-lg overflow-auto">{{
+                devicesVinculados | json
+            }}</pre>
+        </div>
     </div>
 </div>

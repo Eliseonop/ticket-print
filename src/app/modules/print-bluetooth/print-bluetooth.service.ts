@@ -1,97 +1,183 @@
 import { Injectable } from '@angular/core'
-import { BehaviorSubject } from 'rxjs'
+import EscPosEncoder from '@manhnd/esc-pos-encoder'
+import { BehaviorSubject, Observable } from 'rxjs'
+import { PrintAbstractService } from '../print-general/print-service-abstract'
+import { InfoDevice } from '../print-html/print-usb.service'
+import { DeviceType } from '../print-general/print-general.service'
 
 @Injectable({
-    providedIn: 'root'
+    providedIn: 'root' // Puedes ajustar el alcance de tu servicio según tus necesidades
 })
-export class PrintBluetoothService {
-    selectedDevice: BehaviorSubject<BluetoothDevice | null> =
-        new BehaviorSubject<BluetoothDevice | null>(null)
-    private gattServer: BluetoothRemoteGATTServer | null = null
-    private isConnected: BehaviorSubject<boolean> =
-        new BehaviorSubject<boolean>(false)
-
+export class PrintBluetoothService extends PrintAbstractService<BluetoothDevice> {
     private readonly PRINT_SERVICE_UUID = '000018f0-0000-1000-8000-00805f9b34fb'
     private readonly PRINT_CHARACTERISTIC_UUID =
         '00002af1-0000-1000-8000-00805f9b34fb'
+    private printCharacteristic?: BluetoothRemoteGATTCharacteristic
+    public isConnected: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
+        false
+    )
+    // devicesVinculados = new BehaviorSubject<BluetoothDevice[]>([])
+
+    selectedDevice = new BehaviorSubject<BluetoothDevice>(null)
+    info = new BehaviorSubject<string>('')
+    public get isSupported (): boolean {
+        return !!navigator.bluetooth
+    }
+
+    getInformation (): InfoDevice {
+        return {
+            productName: this.selectedDevice.value.name,
+            name: this.selectedDevice.value.name,
+            estado: this.isConnected.value,
+            type: DeviceType.BLUETOOTH
+        }
+    }
+
+    public reconnect (): Observable<BluetoothDevice> {
+        return new Observable(observer => {
+            navigator?.bluetooth?.getDevices().then(devices => {
+                console.log('devices', devices)
+                if (devices.length > 0) {
+                    this.info.next('Dispositivos encontrados')
+                    this.selectedDevice.next(devices[0])
+
+                    this.selectedDevice.value.addEventListener(
+                        'gattserverdisconnected',
+                        this.connectWitRetry
+                    )
+
+                    return observer.next(this.selectedDevice.value)
+                } else {
+                    return observer.next(null)
+                }
+            })
+        })
+    }
+
+    connectWitRetry (): void {
+        this.isConnected.next(false)
+        this.info.next('Desconectado del dispositivo')
+        this.exponentialBackoff(
+            3 /* max retries */,
+            2 /* seconds delay */,
+            function toTry () {
+                this.time('Connecting to Bluetooth Device... ')
+                return this.selectedDevice.gatt.connect()
+            },
+            function success () {
+                console.log(
+                    '> Bluetooth Device connected. Try disconnect it now.'
+                )
+            },
+            function fail () {
+                this.time('Failed to reconnect.')
+            }
+        )
+    }
+    exponentialBackoff (max, delay, toTry, success, fail) {
+        toTry()
+            .then(result => success(result))
+            .catch(_ => {
+                if (max === 0) {
+                    return fail()
+                }
+                this.time(
+                    'Retrying in ' + delay + 's... (' + max + ' tries left)'
+                )
+                setTimeout(function () {
+                    this.exponentialBackoff(
+                        --max,
+                        delay * 2,
+                        toTry,
+                        success,
+                        fail
+                    )
+                }, delay * 1000)
+            })
+    }
+
+    time (text) {
+        console.log('[' + new Date().toJSON().substr(11, 8) + '] ' + text)
+    }
 
     constructor () {
-        this.listenForBluetoothConnections()
-        // this.initializeBluetooth() // Llamar a la inicialización en el constructor
+        super()
     }
 
-    public requestBluetooth (): Promise<BluetoothDevice> {
-        return new Promise<BluetoothDevice>((resolve, reject) => {
+    public connect (): void {
+        this.info.next('Conectando Bluetooth...')
+
+        this.selectedDevice.value?.gatt
+            ?.connect()
+            .then(server => server.getPrimaryService(this.PRINT_SERVICE_UUID))
+            .then(service => {
+                return service.getCharacteristic(this.PRINT_CHARACTERISTIC_UUID)
+            })
+            .then(characteristic => {
+                this.printCharacteristic = characteristic
+                this.info.next('Dispositivo Conectado')
+                console.log(
+                    'Conectado al dispositivo Bluetooth',
+                    this.selectedDevice
+                )
+                this.isConnected.next(true)
+            })
+            .catch(result => {
+                this.info.next('Error al conectar con el dispositivo')
+                console.log('Error al conectar con el dispositivo:', result)
+                this.isConnected.next(false)
+            })
+    }
+
+    listenForDisconnect (): void {}
+
+    public requestDevice (): Observable<BluetoothDevice> {
+        this.info.next('Buscando dispositivos Bluetooth')
+        return new Observable(observer => {
             navigator.bluetooth
                 .requestDevice({
-                    filters: [{ services: [this.PRINT_SERVICE_UUID] }]
+                    filters: [
+                        {
+                            services: [this.PRINT_SERVICE_UUID]
+                        }
+                    ]
                 })
-                .then((device: BluetoothDevice) => {
-                    resolve(device)
+                .then((result: BluetoothDevice) => {
+                    console.log('result', result)
+                    this.info.next('Dispositivo seleccionado')
+                    this.selectedDevice.next(result)
+                    localStorage.setItem('device', DeviceType.BLUETOOTH)
+                    return observer.next(result)
                 })
-                .catch((error: any) => {
-                    console.error(
-                        'Error al solicitar el dispositivo Bluetooth:',
-                        error
-                    )
-                    reject(error)
+                .catch(error => {
+                    this.info.next('Error al seleccionar el dispositivo')
+                    return observer.error(error)
                 })
         })
     }
 
-    // async initializeBluetooth () {
-    //     try {
-    //         const devices = await navigator.bluetooth.getDevices()
-    //         if (devices.length > 0) {
-    //             console.log('Dispositivo Bluetooth encontrado', devices)
-    //             this.selectedDevice.next(devices[0])
-    //             await this.connectDevice(devices[0])
-    //         }
-    //     } catch (error) {
-    //         console.error(error)
-    //     }
-    // }
-
-    async connectDevice (device: BluetoothDevice) {
+    async write (data: Uint8Array): Promise<void> {
         try {
-            this.gattServer = await device.gatt.connect()
-            this.isConnected.next(true)
-            // Lógica adicional de configuración si es necesario
+            this.info.next('Enviando datos de impresión')
+            if (this.printCharacteristic) {
+                const chunks = this.sliceIntoChunks(data, 512)
+                for (const chunk of chunks) {
+                    await this.printCharacteristic.writeValueWithResponse(chunk)
+                }
+                this.info.next('Datos de impresión enviados')
+            }
         } catch (error) {
-            console.error(
-                'Error al conectar con el dispositivo Bluetooth:',
-                error
-            )
+            this.info.next('Error al enviar datos de impresión')
+            console.error('Error al enviar datos de impresión:', error)
         }
     }
 
-    private listenForBluetoothConnections (): void {
-        navigator.bluetooth.addEventListener('gattserverdisconnected', () => {
-            this.isConnected.next(false)
-        })
-        // Puedes agregar más lógica aquí para manejar eventos de conexión, si es necesario
-    }
-
-    public async write (data: Uint8Array): Promise<void> {
-        if (!this.gattServer) {
-            console.log('Dispositivo no inicializado')
-            return
+    private sliceIntoChunks (arr: Uint8Array, chunkSize: number): Uint8Array[] {
+        const res = []
+        for (let i = 0; i < arr.length; i += chunkSize) {
+            const chunk = arr.slice(i, i + chunkSize)
+            res.push(chunk)
         }
-
-        try {
-            const service = await this.gattServer.getPrimaryService(
-                this.PRINT_SERVICE_UUID
-            )
-            const characteristic = await service.getCharacteristic(
-                this.PRINT_CHARACTERISTIC_UUID
-            )
-
-            await characteristic.writeValue(data)
-        } catch (error) {
-            console.error(
-                'Error al escribir en el dispositivo Bluetooth:',
-                error
-            )
-        }
+        return res
     }
 }

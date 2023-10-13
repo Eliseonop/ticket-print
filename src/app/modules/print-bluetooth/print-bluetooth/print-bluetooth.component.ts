@@ -1,27 +1,54 @@
 /// <reference types="web-bluetooth" />
 
-import { Component, OnInit } from '@angular/core'
-import { Observable, map } from 'rxjs'
+import { AfterViewInit, Component, OnInit } from '@angular/core'
+import EscPosEncoder from '@manhnd/esc-pos-encoder'
+import { BehaviorSubject, Observable, interval, map } from 'rxjs'
 
 @Component({
     selector: 'app-print-bluetooth',
     templateUrl: './print-bluetooth.component.html',
     styleUrls: ['./print-bluetooth.component.scss']
 })
-export class PrintBluetoothComponent implements OnInit {
-    private readonly PRINT_SERVICE_UUID = '000018f0-0000-1000-8000-00805f9b34fb'
-    device?: BluetoothDevice
-
+export class PrintBluetoothComponent implements OnInit, AfterViewInit {
+    device: BluetoothDevice
     docs: any
     error: any
+    private readonly PRINT_SERVICE_UUID = '000018f0-0000-1000-8000-00805f9b34fb'
+    private readonly PRINT_CHARACTERISTIC_UUID =
+        '00002af1-0000-1000-8000-00805f9b34fb'
+    private printCharacteristic?: BluetoothRemoteGATTCharacteristic
+    public isConnected: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
+        false
+    )
+    devicesVinculados = new BehaviorSubject<BluetoothDevice[]>([])
     constructor () {}
+    async generateCode () {
+        const codeHeader = new EscPosEncoder().setPinterType(58).align('center')
+
+        codeHeader.text('Código de barras').emptyLine()
+
+        const codigo = new Uint8Array(codeHeader.encode())
+        await this.printData(codigo)
+    }
 
     ngOnInit (): void {
-        console.log(this.isSupported)
+        try {
+            console.log(navigator.bluetooth)
+        } catch (error) {
+            console.log(error)
+        }
+
+        // setTimeout(() => {
+        //     this.onConnectBluetooth()
+        // }, 1000)
+    }
+
+    ngAfterViewInit (): void {
+        //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
+        //Add 'implements AfterViewInit' to the class.
     }
 
     public get isSupported (): boolean {
-        this.docs = !!navigator.bluetooth + ''
         return !!navigator.bluetooth
     }
 
@@ -30,6 +57,12 @@ export class PrintBluetoothComponent implements OnInit {
             (device: BluetoothDevice) => {
                 // Maneja el dispositivo Bluetooth conectado aquí
                 console.log('Dispositivo conectado:', device)
+                if (device) {
+                    this.device = device
+                }
+                if (this.device) {
+                    this.connect()
+                }
             },
             error => {
                 // Maneja los errores aquí
@@ -41,6 +74,40 @@ export class PrintBluetoothComponent implements OnInit {
             }
         )
     }
+    public connect () {
+        this.device?.gatt
+            ?.connect()
+            .then(server => server.getPrimaryService(this.PRINT_SERVICE_UUID))
+            .then(service =>
+                service.getCharacteristic(this.PRINT_CHARACTERISTIC_UUID)
+            )
+            .then(characteristic => {
+                // Cache the characteristic
+                console.log('characteristic', characteristic)
+                this.printCharacteristic = characteristic
+                console.log('Conectado al dispositivo Bluetooth', this.device)
+                this.isConnected.next(true)
+            })
+            .catch(result => {
+                console.log('Error al conectar con el dispositivo:', result)
+                this.isConnected.next(false)
+            })
+    }
+
+    getDevicesVinculados () {
+        navigator.bluetooth.getDevices().then(async devices => {
+            this.devicesVinculados.next(devices)
+
+            if (devices.length > 0) {
+                this.device = devices[0]
+                // this.device.gatt.connect()
+                console.log('Dispositivo Bluetooth encontrado', this.device)
+            }
+            this.connect()
+
+            console.log('Dispositivos vinculados:', devices)
+        })
+    }
 
     public requestBluetooth (): Observable<BluetoothDevice> {
         return new Observable(observer => {
@@ -48,11 +115,17 @@ export class PrintBluetoothComponent implements OnInit {
                 .requestDevice({
                     filters: [
                         {
-                            services: ['00001101-0000-1000-8000-00805f9b34fb']
+                            services: [this.PRINT_SERVICE_UUID]
                         }
                     ]
+                    // acceptAllDevices: true
+
+                    // optionalServices
+                    // filters: []
+                    // filters: [{ services: [this.PRINT_SERVICE_UUID] }]
                 })
                 .then((result: BluetoothDevice) => {
+                    console.log('result', result)
                     this.device = result
                     return observer.next(result)
                 })
@@ -60,5 +133,26 @@ export class PrintBluetoothComponent implements OnInit {
                     return observer.error(error)
                 })
         })
+    }
+    async printData (data: Uint8Array) {
+        try {
+            if (this.printCharacteristic) {
+                // writeValueWithResponse allows max 512 for operation, so we have to split the data
+                const chunks = this.sliceIntoChunks(data, 512)
+                for (const chunk of chunks) {
+                    await this.printCharacteristic.writeValueWithResponse(chunk)
+                }
+            }
+        } catch (error) {
+            console.error('Error al enviar datos de impresión:', error)
+        }
+    }
+    private sliceIntoChunks (arr: Uint8Array, chunkSize: number): Uint8Array[] {
+        const res = []
+        for (let i = 0; i < arr.length; i += chunkSize) {
+            const chunk = arr.slice(i, i + chunkSize)
+            res.push(chunk)
+        }
+        return res
     }
 }

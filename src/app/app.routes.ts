@@ -152,6 +152,20 @@ export const appRoutes: Route[] = [
                     import(
                         'app/modules/print-bluetooth/print-bluetooth.module'
                     ).then(m => m.PrintBluetoothModule)
+            },
+            {
+                path: 'prueba',
+                loadChildren: () =>
+                    import(
+                        'app/modules/prueba-angular/prueba-angular.module'
+                    ).then(m => m.PruebaAngularModule)
+            },
+            {
+                path: 'print-general',
+                loadChildren: () =>
+                    import(
+                        'app/modules/print-general/print-general.module'
+                    ).then(m => m.PrintGeneralModule)
             }
         ]
     }
