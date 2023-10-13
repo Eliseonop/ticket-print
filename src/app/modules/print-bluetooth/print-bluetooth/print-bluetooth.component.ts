@@ -2,6 +2,7 @@
 
 import { AfterViewInit, Component, OnInit } from '@angular/core'
 import EscPosEncoder from '@manhnd/esc-pos-encoder'
+import { PrintGeneralService } from 'app/modules/print-general/print-general.service'
 import { BehaviorSubject, Observable, interval, map } from 'rxjs'
 
 @Component({
@@ -21,14 +22,18 @@ export class PrintBluetoothComponent implements OnInit, AfterViewInit {
         false
     )
     devicesVinculados = new BehaviorSubject<BluetoothDevice[]>([])
-    constructor () {}
+    constructor (private pgs: PrintGeneralService) {}
     async generateCode () {
-        const codeHeader = new EscPosEncoder().setPinterType(58).align('center')
+        const codeHeader = new EscPosEncoder().setPinterType(36)
 
-        codeHeader.text('Código de barras').emptyLine()
+        codeHeader
+            .text('12345678901234567890123456789012345678901234567890')
+            .emptyLine()
+            .emptyLine()
+            .cut()
 
         const codigo = new Uint8Array(codeHeader.encode())
-        await this.printData(codigo)
+        await this.pgs.print(codigo)
     }
 
     ngOnInit (): void {

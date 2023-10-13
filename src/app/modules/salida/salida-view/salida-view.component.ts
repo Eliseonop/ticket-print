@@ -10,6 +10,7 @@ import { UserModel } from 'app/modules/recibo/models/reciboDetalle.models'
 import EscPosEncoder from '@manhnd/esc-pos-encoder'
 import { GeocercaService } from '../geocerca.service'
 import { PrintUsbService } from 'app/modules/print-html/print-usb.service'
+import { PrintGeneralService } from 'app/modules/print-general/print-general.service'
 
 @Component({
     selector: 'app-salida-view',
@@ -68,12 +69,14 @@ export class SalidaViewComponent implements OnInit {
     constructor (
         private deviceService: PrintUsbService,
         private salidaService: SalidaService,
-        private geocercaService: GeocercaService
+        private geocercaService: GeocercaService,
+        private pgs: PrintGeneralService
     ) {}
     private imprimirNombre: ConfiguracionesModel
     private imprimirCodigo: ConfiguracionesModel
 
     salidaData: SalidaCompletaModel
+
     ngOnInit () {
         this.geocercaService.getGeocercaData().subscribe(data => {
             console.log('geocercas', data)
@@ -445,7 +448,7 @@ export class SalidaViewComponent implements OnInit {
 
     async getTicketUnicode () {
         const salida = (await this.generateCodeSalida()).encode()
-        await this.sendDataToDevice(salida)
+        this.pgs.print(salida)
     }
     async sendDataToDevice (data: Uint8Array): Promise<void> {
         await this.deviceService.write(data)
@@ -454,11 +457,7 @@ export class SalidaViewComponent implements OnInit {
         this.deviceService.requestDevice()
     }
     print () {
-        if (this.device) {
-            this.getTicketUnicode()
-        } else {
-            this.deviceService.requestDevice() // Solicitar dispositivo si no está conectado
-        }
+        this.getTicketUnicode()
     }
 
     salidaToUnicode (salida: any) {}

@@ -164,6 +164,8 @@ export class PrintUsbService extends PrintAbstractService<USBDevice> {
                 this.endPoint.endpointNumber,
                 data
             )
+
+            this.info.next('Impresión finalizada')
         } catch (error) {
             this.info.next('Error al enviar datos al dispositivo USB')
 

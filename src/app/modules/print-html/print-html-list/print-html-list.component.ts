@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog'
 // import ThermalPrinterEncoder from 'thermal-printer-encoder'
 // import ThermalPrinterEncoder from 'esc-pos-encoder'
 import EscPosEncoder from '@manhnd/esc-pos-encoder'
+import { PrintGeneralService } from 'app/modules/print-general/print-general.service'
 import { PrintUsbService } from 'app/modules/print-html/print-usb.service'
 import { IMoneda } from 'app/modules/recibo/models/reciboDetalle.interface'
 import {
@@ -96,6 +97,7 @@ export class PrintHtmlListComponent implements OnInit {
     constructor (
         private ticketService: ReciboDetalleService,
         private printUsbService: PrintUsbService,
+        private pgs: PrintGeneralService,
         private _matDialog: MatDialog
     ) {
         // img.src = `${window.location.origin}/assets/images/nuphar.jpg`
@@ -132,13 +134,13 @@ export class PrintHtmlListComponent implements OnInit {
     }
 
     print () {
-        if (this.device) {
-            console.log('dispositivo conectado', this.device)
-            // Realizar la impresión
-            this.getTicketToUnicode(this.recibo)
-        } else {
-            this.printUsbService.requestDevice() // Solicitar dispositivo si no está conectado
-        }
+        // if (this.device) {
+        console.log('dispositivo conectado', this.device)
+        // Realizar la impresión
+        this.getTicketToUnicode(this.recibo)
+        // } else {
+        //     this.printUsbService.requestDevice() // Solicitar dispositivo si no está conectado
+        // }
     }
 
     initSaveInformation (recibo: ReciboDetalleModel) {
@@ -510,7 +512,7 @@ export class PrintHtmlListComponent implements OnInit {
     }
 
     async sendDataToDevice (data: Uint8Array): Promise<void> {
-        await this.printUsbService.write(data)
+        await this.pgs.print(data)
     }
     transformDate (date: DateTime): string {
         // 2023-07-27T10:25:20.958149-05:00"

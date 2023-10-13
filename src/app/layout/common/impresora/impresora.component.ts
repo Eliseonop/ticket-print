@@ -67,15 +67,14 @@ export class ImpresoraComponent implements OnInit, AfterViewInit {
                 .subscribe()
         }
         if (device === DeviceType.BLUETOOTH) {
-            setTimeout(() => {
-                navigator.bluetooth
-                    .getDevices()
-                    .then((devices: BluetoothDevice[]) => {
-                        console.log('devices', devices)
-                        // this.printBluetoothService.devicesVinculados.next(devices)
-                    })
-            }, 5000)
-
+            // setTimeout(() => {
+            //     navigator.bluetooth
+            //         .getDevices()
+            //         .then((devices: BluetoothDevice[]) => {
+            //             console.log('devices', devices)
+            //             // this.printBluetoothService.devicesVinculados.next(devices)
+            //         })
+            // }, 5000)
             // this.printBluetoothService
             //     .reconnect()
             //     .pipe(

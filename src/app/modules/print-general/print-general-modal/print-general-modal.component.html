@@ -1,4 +1,4 @@
-<div class="p-4 flex rounded-lg flex-col">
+<div class="p-0 md:p-4 flex rounded-lg flex-col">
     <div
         class="flex justify-between items-center border-b mb-3 border-gray-400 pb-2 gap-7"
     >
@@ -47,10 +47,6 @@
     </div>
 
     <div class="w-full">
-        <div class="bg-white p-2 my-4 rounded-lg overflow-auto">
-            Proceso : {{ info }}
-        </div>
-
         <div class="bg-white p-2 rounded-lg overflow-auto">
             Estado:
             <span class="font-bold">{{
@@ -64,6 +60,14 @@
         <div class="bg-white p-2 rounded-lg overflow-auto">
             Nombre: <span class="font-bold">{{ printerInfo?.name }}</span>
         </div>
+        <div
+            class="flex justify-between items-center border-b mb-3 border-gray-400 pb-2"
+        >
+            <!-- <div class="text-lg font-medium">Informacion de la impresora</div> -->
+        </div>
+        <div class="bg-white p-2 rounded-lg overflow-auto">
+            Proceso : {{ info }}
+        </div>
     </div>
 
     <!-- footer para cerrar cancelar o guardar   -->
@@ -71,10 +75,10 @@
     <!-- <div
         class="flex justify-between items-center border-b mb-3 border-gray-400 pb-2"
     ></div> -->
-    <div class="flex justify-end my-3 gap-3">
+    <!-- <div class="flex justify-end my-3 gap-3">
         <button mat-button color="warn">Cancelar</button>
         <button mat-button>Guardar</button>
 
         <button mat-button>Imprimir</button>
-    </div>
+    </div> -->
 </div>
