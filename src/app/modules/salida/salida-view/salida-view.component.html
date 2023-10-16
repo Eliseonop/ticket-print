@@ -1,20 +1,5 @@
-<div class="w-full flex flex-col items-center justify-center gap-10">
+<div class="w-full flex flex-col items-center gap-10">
     <div class="w-full flex flex-col items-center justify-center gap-10">
-        <button
-            (click)="requestDevice()"
-            mat-raised-button
-            color="primary"
-            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            [disabled]="!!device"
-        >
-            Request USB Device
-        </button>
-        <!-- <button (click)="preView()" mat-raised-button color="primary">
-            Open modal
-        </button> -->
-
-        <!-- <div *ngIf="salidaDetalle" class="w-28"></div> -->
-
         <button
             class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
             mat-raised-button
@@ -23,5 +8,11 @@
         >
             Print Salida
         </button>
+    </div>
+
+    <!-- div con altura y scrol -->
+    <div class="h-[800px] overflow-y-auto">
+        <app-salida-preview32 [structureData]="structureData">
+        </app-salida-preview32>
     </div>
 </div>

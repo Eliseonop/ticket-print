@@ -187,7 +187,7 @@ export class SalidaCompletaModel {
             return this.conductor?.id ? this.conductor.codigo : 'TEMPORAL'
         } else {
             return this.conductor?.id
-                ? this.conductor.nombre.slice(0, 32)
+                ? this.conductor.nombre.slice(0, 20)
                 : 'TEMPORAL'
         }
     }
@@ -197,7 +197,7 @@ export class SalidaCompletaModel {
             return this.cobrador?.id ? this.cobrador.codigo : 'TEMPORAL'
         } else {
             return this.cobrador?.id
-                ? this.cobrador.nombre.slice(0, 32)
+                ? this.cobrador.nombre.slice(0, 20)
                 : 'TEMPORAL'
         }
     }

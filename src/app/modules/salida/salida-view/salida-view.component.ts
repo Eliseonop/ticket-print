@@ -11,6 +11,8 @@ import EscPosEncoder from '@manhnd/esc-pos-encoder'
 import { GeocercaService } from '../geocerca.service'
 import { PrintUsbService } from 'app/modules/print-html/print-usb.service'
 import { PrintGeneralService } from 'app/modules/print-general/print-general.service'
+import { dataToTablePos } from 'app/modules/utils/functions/dataToTablePos'
+import { map } from 'rxjs'
 
 @Component({
     selector: 'app-salida-view',
@@ -18,6 +20,53 @@ import { PrintGeneralService } from 'app/modules/print-general/print-general.ser
     styleUrls: ['./salida-view.component.scss']
 })
 export class SalidaViewComponent implements OnInit {
+    // printerType: PrinterType[] = [PrinterType['58mm'], PrinterType['80mm']]
+
+    // selectedPrinterType = PrinterType['58mm']
+
+    SelectPaperConfigStructure = {
+        T4D1width: [{ w: 10 }, { w: 14 }, { w: 10 }, { w: 14 }],
+        T2D2width: [{ w: 10 }, { w: 38 }],
+        T4D3width: [{ w: 6 }, { w: 6 }, { w: 6 }, { w: 6, a: 'right' }],
+        T5Cwidth: [
+            { w: 4, a: 'left' },
+            { w: 29, a: 'center' },
+            { w: 5, a: 'center' },
+            { w: 9, a: 'center' },
+            { w: 1, a: 'right' }
+        ],
+        T4PHwidth: [
+            { w: 12, a: 'left' },
+            { w: 12, a: 'left' },
+            { w: 12, a: 'right' },
+            { w: 12, a: 'right' }
+        ],
+        T9SHwidth: [
+            { w: 1 },
+            { w: 22 },
+            { w: 1 },
+            { w: 7 },
+            { w: 1 },
+            { w: 7 },
+            { w: 1 },
+            { w: 7 },
+            { w: 1 }
+        ],
+        T9SBwidth: [
+            { w: 1 },
+            { w: 7 },
+            { w: 1 },
+            { w: 14 },
+            { w: 1 },
+            { w: 7 },
+            { w: 1 },
+            { w: 7 },
+            { w: 1 },
+            { w: 7 },
+            { w: 1 }
+        ]
+    }
+
     device: USBDevice
     private _geocercas: any[] = []
     get geocercas (): GeocercaModel[] {
@@ -51,10 +100,11 @@ export class SalidaViewComponent implements OnInit {
             table4Data3: null
         },
         body: {
-            tableControles: null,
+            table5Controles: null,
             textLiqTitle: null,
-            tablePadHora: null,
-            tableSuministros: null
+            table4PadHora: null,
+            table9SumHeader: null,
+            table9Suministros: null
         },
         footer: {
             textHoraUser: null,
@@ -161,7 +211,7 @@ export class SalidaViewComponent implements OnInit {
             '|'
         ])
         console.log('crls', crls)
-        this.structureData.body.tableControles = [
+        this.structureData.body.table5Controles = [
             ['', '', '', '', ''],
 
             ['|', 'CONTROL', '|', 'HORA', '|'],
@@ -170,7 +220,7 @@ export class SalidaViewComponent implements OnInit {
 
         if (salida.unidad.suministros.length > 0 && imprimirLiquidacion) {
             this.structureData.body.textLiqTitle = 'LIQUIDACION DE BOLETOS'
-            this.structureData.body.tablePadHora = [
+            this.structureData.body.table4PadHora = [
                 [
                     'PAD',
                     salida.padron + '',
@@ -178,8 +228,13 @@ export class SalidaViewComponent implements OnInit {
                     salida.inicio.toFormat('HH:mm')
                 ]
             ]
+            this.structureData.body.table9SumHeader = [
+                ['INSPECT'],
+                ['LUGAR'],
+                ['HORA']
+            ]
 
-            this.structureData.body.tableSuministros = [
+            this.structureData.body.table9Suministros = [
                 ...salida.unidad.suministros.map(s => {
                     const tacos = Math.floor((s.fin - s.actual) / 100)
                     let inicio =
@@ -187,19 +242,7 @@ export class SalidaViewComponent implements OnInit {
                     if (tacos === 0) {
                         inicio = s.actual.toString().padStart(6, '0')
                     }
-                    return [
-                        '|',
-                        s.boleto.tarifa.toFixed(1),
-                        '|',
-                        inicio,
-                        '|',
-                        '',
-                        '|',
-                        '',
-                        '|',
-                        '',
-                        '|'
-                    ]
+                    return [s.boleto.tarifa.toFixed(1), inicio]
                 })
             ]
         }
@@ -209,6 +252,12 @@ export class SalidaViewComponent implements OnInit {
         )} ${this.user.username.toUpperCase()}`
         this.structureData.footer.textSalida = `SALIDA: ${salida.id}`
         this.structureData.footer.textData = `Sistema de Gestion TCONTUR`
+
+        console.log('structureData', this.structureData)
+        console.log(
+            this.structureData.body.table9SumHeader
+            // dataToTablePos(this.structureData.body.table9Suministros, 11)
+        )
     }
 
     async generateCodeSalida (): Promise<EscPosEncoder> {
@@ -223,58 +272,30 @@ export class SalidaViewComponent implements OnInit {
 
         if (this.structureData.header.table4Data1) {
             codeSalida.align('left').table(
-                [
-                    {
-                        width: 10
-                    },
-                    {
-                        width: 14
-                    },
-                    {
-                        width: 10
-                    },
-                    {
-                        width: 14
-                    }
-                ],
-
+                this.SelectPaperConfigStructure.T4D1width.map(item => ({
+                    width: item.w
+                })),
                 [...this.structureData.header.table4Data1]
             )
         }
         if (this.structureData.header.table2Data2) {
             codeSalida.align('left').table(
-                [
-                    {
-                        width: 10
-                    },
-                    {
-                        width: 38
-                    }
-                ],
+                this.SelectPaperConfigStructure.T2D2width.map(items => ({
+                    width: items.w
+                })),
                 [...this.structureData.header.table2Data2]
             )
         }
         if (this.structureData.header.table4Data3) {
             codeSalida.size(2).table(
-                [
-                    {
-                        width: 6
-                    },
-                    {
-                        width: 6
-                    },
-                    {
-                        width: 6
-                    },
-                    {
-                        width: 6,
-                        align: 'right'
-                    }
-                ],
+                this.SelectPaperConfigStructure.T4D3width.map(item => ({
+                    width: item.w,
+                    align: item.a ? item.a : 'center'
+                })),
                 [...this.structureData.header.table4Data3]
             )
         }
-        if (this.structureData.body.tableControles) {
+        if (this.structureData.body.table5Controles) {
             codeSalida
                 .size(3)
                 .underline(1)
@@ -282,29 +303,11 @@ export class SalidaViewComponent implements OnInit {
                 .underline(true)
                 .underline(2)
                 .table(
-                    [
-                        {
-                            width: 4,
-                            align: 'left'
-                        },
-                        {
-                            width: 29,
-                            align: 'center'
-                        },
-                        {
-                            width: 5,
-                            align: 'center'
-                        },
-                        {
-                            width: 9,
-                            align: 'center'
-                        },
-                        {
-                            width: 1,
-                            align: 'right'
-                        }
-                    ],
-                    [...this.structureData.body.tableControles]
+                    this.SelectPaperConfigStructure.T5Cwidth.map(item => ({
+                        width: item.w,
+                        align: item.a ? item.a : 'center'
+                    })),
+                    [...this.structureData.body.table5Controles]
                 )
                 .underline(false)
         }
@@ -318,7 +321,7 @@ export class SalidaViewComponent implements OnInit {
                 .line(this.structureData.body.textLiqTitle)
         }
 
-        if (this.structureData.body.tablePadHora) {
+        if (this.structureData.body.table4PadHora) {
             codeSalida.size(3).table(
                 [
                     {
@@ -338,11 +341,26 @@ export class SalidaViewComponent implements OnInit {
                         align: 'right'
                     }
                 ],
-                [...this.structureData.body.tablePadHora]
+                [...this.structureData.body.table4PadHora]
             )
         }
 
-        if (this.structureData.body.tableSuministros) {
+        if (this.structureData.body.table9Suministros) {
+            const columsT9 = this.structureData.body.table9SumHeader.map(s =>
+                dataToTablePos(s, 9)
+            )
+
+            const columnT11sum = this.structureData.body.table9Suministros.map(
+                s => dataToTablePos(s, 11)
+            )
+
+            console.log(
+                'columsT9',
+                this.SelectPaperConfigStructure.T9SHwidth.map(item => ({
+                    width: item.w
+                }))
+            )
+            console.log('columsT9', [...columsT9])
             codeSalida
                 .bold(false)
                 .align('left')
@@ -350,80 +368,18 @@ export class SalidaViewComponent implements OnInit {
                 .underline(true)
                 .underline(2)
                 .table(
-                    [
-                        {
-                            width: 1
-                        },
-                        {
-                            width: 22
-                        },
-                        {
-                            width: 1
-                        },
-                        {
-                            width: 7
-                        },
-                        {
-                            width: 1
-                        },
-                        {
-                            width: 7
-                        },
-                        {
-                            width: 1
-                        },
-                        {
-                            width: 7
-                        },
-                        {
-                            width: 1
-                        }
-                    ],
-                    [
-                        ['', '', '', '', '', '', '', '', ''],
+                    this.SelectPaperConfigStructure.T9SHwidth.map(item => ({
+                        width: item.w
+                    })),
 
-                        ['|', 'INSPECT', '|', '', '|', '', '|', '', '|'],
-                        ['|', 'LUGAR', '|', '', '|', '', '|', '', '|'],
-                        ['|', 'HORA', '|', '', '|', '', '|', '', '|']
-                    ]
+                    [['', '', '', '', '', '', '', '', ''], ...columsT9]
                 )
                 .table(
-                    [
-                        {
-                            width: 1
-                        },
-                        {
-                            width: 7
-                        },
-                        {
-                            width: 1
-                        },
-                        {
-                            width: 14
-                        },
-                        {
-                            width: 1
-                        },
-                        {
-                            width: 7
-                        },
-                        {
-                            width: 1
-                        },
-                        {
-                            width: 7
-                        },
-                        {
-                            width: 1
-                        },
-                        {
-                            width: 7
-                        },
-                        {
-                            width: 1
-                        }
-                    ],
-                    [...this.structureData.body.tableSuministros]
+                    this.SelectPaperConfigStructure.T9SBwidth.map(item => ({
+                        width: item.w
+                    })),
+
+                    [...columnT11sum]
                 )
         }
 

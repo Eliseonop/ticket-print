@@ -5,9 +5,10 @@ import { RouterModule } from '@angular/router'
 import { salidaRoutes } from './salida.routes'
 import { MaterialModule } from '../utils/shared/material.module'
 import { ReactiveFormsModule } from '@angular/forms'
+import { SalidaPreview32Component } from './salida-preview32/salida-preview32.component'
 
 @NgModule({
-    declarations: [SalidaViewComponent],
+    declarations: [SalidaViewComponent, SalidaPreview32Component],
     imports: [
         RouterModule.forChild(salidaRoutes),
         MaterialModule,

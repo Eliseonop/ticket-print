@@ -1,0 +1,62 @@
+<div class="font-mono break-all text-md receipt p-2 border rounded bg-white">
+    <div class="max-w-[32ch] w-[32ch]">
+        <div class="h-[1ch]"></div>
+
+        <div class="text-center">
+            {{ structureData.header.textCompany }}
+        </div>
+        <div class="h-[1ch]"></div>
+
+        <div *ngFor="let row of structureData.header.table4Data1">
+            <span class="flex">
+                <span *ngFor="let item of row" class="w-16 flex">{{
+                    item
+                }}</span>
+            </span>
+        </div>
+
+        <div *ngFor="let row of structureData.header.table2Data2">
+            <span class="flex space-x-8">
+                <span *ngFor="let item of row">{{ item }}</span>
+            </span>
+        </div>
+
+        <div *ngFor="let row of structureData.header.table4Data3">
+            <span class="flex space-x-8 text-xl font-semibold">
+                <span *ngFor="let item of row">{{ item }}</span>
+            </span>
+        </div>
+        <div class="h-[1ch]"></div>
+        <div *ngFor="let row of structureData.body.table5Controles" class="">
+            <!-- <span class="flex font-semibold space-x-5">
+                <span *ngFor="let item of row">{{ item }}</span>
+            </span> -->
+            <!-- hacer una tabla con bordes -->
+            <table class="w-full">
+                <tr class="border border-solid">
+                    <ng-container *ngFor="let item of row; let i = index">
+                        <td
+                            class="border text-left"
+                            [ngClass]="{
+                                'w-2/3': i === 1,
+
+                            }"
+                            *ngIf="item !== '|'"
+                        >
+                            {{ item }}
+                        </td>
+                    </ng-container>
+                </tr>
+            </table>
+        </div>
+        <div class="h-[1ch]"></div>
+        <div class="text-center">
+            {{ structureData.body.textLiqTitle }}
+        </div>
+        <div *ngFor="let row of structureData.body.table4PadHora" class="">
+            <span class="flex space-x-10 font-semibold">
+                <span *ngFor="let item of row">{{ item }}</span>
+            </span>
+        </div>
+    </div>
+</div>

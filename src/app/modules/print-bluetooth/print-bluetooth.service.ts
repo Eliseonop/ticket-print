@@ -41,9 +41,19 @@ export class PrintBluetoothService extends PrintAbstractService<BluetoothDevice>
                     this.info.next('Dispositivos encontrados')
                     this.selectedDevice.next(devices[0])
 
+                    this.selectedDevice.value.watchAdvertisements().then(a => {
+                        console.log('a', a)
+                    })
+
                     this.selectedDevice.value.addEventListener(
-                        'gattserverdisconnected',
-                        this.connectWitRetry
+                        'advertisementreceived',
+                        event => {
+                            this.info.next('Sincrionizando dispositivo...')
+                            console.log('event', event)
+                            // event.device.gatt.connect()
+                            // this.selectedDevice.next(event.device)
+                            this.connect()
+                        }
                     )
 
                     return observer.next(this.selectedDevice.value)
@@ -52,52 +62,6 @@ export class PrintBluetoothService extends PrintAbstractService<BluetoothDevice>
                 }
             })
         })
-    }
-
-    connectWitRetry (): void {
-        this.isConnected.next(false)
-        this.info.next('Desconectado del dispositivo')
-        this.exponentialBackoff(
-            3 /* max retries */,
-            2 /* seconds delay */,
-            function toTry () {
-                this.time('Connecting to Bluetooth Device... ')
-                return this.selectedDevice.gatt.connect()
-            },
-            function success () {
-                console.log(
-                    '> Bluetooth Device connected. Try disconnect it now.'
-                )
-            },
-            function fail () {
-                this.time('Failed to reconnect.')
-            }
-        )
-    }
-    exponentialBackoff (max, delay, toTry, success, fail) {
-        toTry()
-            .then(result => success(result))
-            .catch(_ => {
-                if (max === 0) {
-                    return fail()
-                }
-                this.time(
-                    'Retrying in ' + delay + 's... (' + max + ' tries left)'
-                )
-                setTimeout(function () {
-                    this.exponentialBackoff(
-                        --max,
-                        delay * 2,
-                        toTry,
-                        success,
-                        fail
-                    )
-                }, delay * 1000)
-            })
-    }
-
-    time (text) {
-        console.log('[' + new Date().toJSON().substr(11, 8) + '] ' + text)
     }
 
     constructor () {
@@ -111,6 +75,7 @@ export class PrintBluetoothService extends PrintAbstractService<BluetoothDevice>
             ?.connect()
             .then(server => server.getPrimaryService(this.PRINT_SERVICE_UUID))
             .then(service => {
+                console.log('service', service)
                 return service.getCharacteristic(this.PRINT_CHARACTERISTIC_UUID)
             })
             .then(characteristic => {

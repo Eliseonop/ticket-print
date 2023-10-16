@@ -1,4 +1,4 @@
-<div class="p-0 md:p-4 flex rounded-lg flex-col">
+<div class="p-0 md:p-1 flex rounded-lg flex-col w-80">
     <div
         class="flex justify-between items-center border-b mb-3 border-gray-400 pb-2 gap-7"
     >
@@ -14,30 +14,38 @@
     </div>
 
     <div class="flex justify-center gap-14">
-        <div
+        <button
+            class="flex justify-between my-4 p-3 ring-1 rounded-lg"
             [ngClass]="{
-                'flex  justify-between my-4 hover:ring-2 p-3 ring-1   rounded-lg cursor-pointer':
-                    usbEnable,
+                ' hover:ring-2  cursor-pointer': usbEnable,
                 'opacity-50 cursor-not-allowed': !usbEnable,
                 'ring-4 ring-sky-600': printerInfo?.type === 'usb'
             }"
+            [disabled]="!usbEnable"
             (click)="requestDeviceUsb()"
         >
             <mat-icon class="mat-18" matTooltip="Conexion USB">usb</mat-icon>
-        </div>
-        <div
+        </button>
+        <button
+            class="flex justify-between my-4 p-3 ring-1 rounded-lg"
             [ngClass]="{
-                'flex  justify-between my-4 hover:ring-2 p-3 ring-1   rounded-lg cursor-pointer':
-                    blueEnable,
+                ' hover:ring-2  cursor-pointer': blueEnable,
                 'opacity-50 cursor-not-allowed': !blueEnable,
                 'ring-4 ring-sky-600': printerInfo?.type === 'bluetooth'
             }"
+            [disabled]="!blueEnable"
             (click)="requestDeviceBluetooth()"
         >
-            <mat-icon class="mat-18" matTooltip="Conexion bluetooth"
+            <mat-icon
+                class="mat-18"
+                [matTooltip]="
+                    blueEnable
+                        ? 'Conexion Bluetooth'
+                        : 'Bluetooth no disponible'
+                "
                 >bluetooth</mat-icon
             >
-        </div>
+        </button>
     </div>
     <!-- n pre con informacion de la impresora -->
     <div
