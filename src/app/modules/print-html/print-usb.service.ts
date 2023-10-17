@@ -40,6 +40,17 @@ export class PrintUsbService extends PrintAbstractService<USBDevice> {
         }
     }
 
+    disconnect (): void {
+        if (!this.selectedDevice) {
+            console.log('Dispositivo no inicializado ')
+            return
+        }
+        this.selectedDevice.value.close()
+        this.isConnected.next(false)
+        this.selectedDevice.next(null)
+        localStorage.setItem('device', DeviceType.PDF)
+    }
+
     requestDevice (): Observable<USBDevice> {
         this.info.next('Buscando dispositivos USB...')
         return new Observable(observer => {

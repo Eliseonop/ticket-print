@@ -1,5 +1,5 @@
 <div class="font-mono break-all text-md receipt p-2 border rounded bg-white">
-    <div class="max-w-[32ch] w-[32ch]">
+    <div class="max-w-[32ch] w-[32ch]" *ngIf="structureData">
         <div class="h-[1ch]"></div>
 
         <div class="text-center">
@@ -38,10 +38,8 @@
                         <td
                             class="border text-left"
                             [ngClass]="{
-                                'w-2/3': i === 1,
-
+                                'w-2/3': i === 0
                             }"
-                            *ngIf="item !== '|'"
                         >
                             {{ item }}
                         </td>
@@ -57,6 +55,54 @@
             <span class="flex space-x-10 font-semibold">
                 <span *ngFor="let item of row">{{ item }}</span>
             </span>
+        </div>
+        <div class="h-[1ch]"></div>
+        <div *ngFor="let row of structureData.body.table9SumHeader" class="">
+            <!-- <span class="flex font-semibold space-x-5">
+                <span *ngFor="let item of row">{{ item }}</span>
+            </span> -->
+            <!-- hacer una tabla con bordes -->
+            <table class="w-full">
+                <tr class="border border-solid">
+                    <ng-container *ngFor="let item of row; let i = index">
+                        <td
+                            class="border text-left"
+                            [ngClass]="{
+                                'w-2/3': i === 0
+                            }"
+                        >
+                            {{ item }}
+                        </td>
+                    </ng-container>
+                </tr>
+            </table>
+        </div>
+        <div *ngFor="let row of structureData.body.table9Suministros" class="">
+            <table class="w-full">
+                <tr class="border border-solid">
+                    <ng-container *ngFor="let item of row; let i = index">
+                        <td
+                            class="border text-left"
+                            [ngClass]="{
+                                'w-10': i === 0
+                            }"
+                        >
+                            {{ item }}
+                        </td>
+                    </ng-container>
+                </tr>
+            </table>
+        </div>
+        <div class="h-[1ch]"></div>
+
+        <div class="text-center">
+            {{ structureData.footer.textHoraUser }}
+        </div>
+        <div class="text-center">
+            {{ structureData.footer.textSalida }}
+        </div>
+        <div class="text-center">
+            {{ structureData.footer.textData }}
         </div>
     </div>
 </div>

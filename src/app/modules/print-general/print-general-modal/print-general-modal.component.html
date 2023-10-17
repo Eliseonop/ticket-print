@@ -46,6 +46,19 @@
                 >bluetooth</mat-icon
             >
         </button>
+        <button
+            class="flex justify-between my-4 p-3 ring-1 rounded-lg"
+            [ngClass]="{
+                'ring-4 ring-sky-600': deviceType === 'pdf'
+            }"
+            (click)="selectNone()"
+            matTooltip="Otra impresora"
+        >
+            <mat-icon
+                class="mat-18"
+                svgIcon="heroicons_outline:window"
+            ></mat-icon>
+        </button>
     </div>
     <!-- n pre con informacion de la impresora -->
     <div
@@ -74,7 +87,7 @@
             <!-- <div class="text-lg font-medium">Informacion de la impresora</div> -->
         </div>
         <div class="bg-white p-2 rounded-lg overflow-auto">
-            Proceso : {{ info }}
+            Proceso : {{ process }}
         </div>
     </div>
 

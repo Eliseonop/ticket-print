@@ -24,6 +24,17 @@ export class PrintBluetoothService extends PrintAbstractService<BluetoothDevice>
         return !!navigator.bluetooth
     }
 
+    public disconnect (): void {
+        if (!this.selectedDevice) {
+            console.log('Dispositivo no inicializado ')
+            return
+        }
+        this.selectedDevice.value.gatt.disconnect()
+        this.isConnected.next(false)
+        this.selectedDevice.next(null)
+        localStorage.setItem('device', DeviceType.PDF)
+    }
+
     getInformation (): InfoDevice {
         return {
             productName: this.selectedDevice.value.name,

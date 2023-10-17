@@ -11,8 +11,8 @@ import EscPosEncoder from '@manhnd/esc-pos-encoder'
 import { GeocercaService } from '../geocerca.service'
 import { PrintUsbService } from 'app/modules/print-html/print-usb.service'
 import { PrintGeneralService } from 'app/modules/print-general/print-general.service'
-import { dataToTablePos } from 'app/modules/utils/functions/dataToTablePos'
 import { map } from 'rxjs'
+import { SalidaPos } from '../utils/salidaData.interface'
 
 @Component({
     selector: 'app-salida-view',
@@ -52,7 +52,7 @@ export class SalidaViewComponent implements OnInit {
             { w: 7 },
             { w: 1 }
         ],
-        T9SBwidth: [
+        T11SBwidth: [
             { w: 1 },
             { w: 7 },
             { w: 1 },
@@ -92,26 +92,7 @@ export class SalidaViewComponent implements OnInit {
         nombre: 'company',
         data: 'TCONTUR'
     }
-    structureData = {
-        header: {
-            textCompany: null,
-            table4Data1: null,
-            table2Data2: null,
-            table4Data3: null
-        },
-        body: {
-            table5Controles: null,
-            textLiqTitle: null,
-            table4PadHora: null,
-            table9SumHeader: null,
-            table9Suministros: null
-        },
-        footer: {
-            textHoraUser: null,
-            textSalida: null,
-            textData: null
-        }
-    }
+    dataForPrint: SalidaPos
     ruta = {
         codigo: '6354',
         nombre: 'RUTA'
@@ -129,12 +110,12 @@ export class SalidaViewComponent implements OnInit {
 
     ngOnInit () {
         this.geocercaService.getGeocercaData().subscribe(data => {
-            console.log('geocercas', data)
+            // console.log('geocercas', data)
             this.geocercas = data
         })
 
         this.salidaService.getSalidaCompleta().subscribe(data => {
-            console.log('data', data)
+            // console.log('data', data)
             if (data) {
                 this.salidaData = data
 
@@ -149,13 +130,34 @@ export class SalidaViewComponent implements OnInit {
         salida: SalidaCompletaModel,
         imprimirLiquidacion: boolean
     ) {
+        let finalSalidaData: SalidaPos = {
+            header: {
+                textCompany: '',
+                table4Data1: [],
+                table2Data2: [],
+                table4Data3: []
+            },
+            body: {
+                textLiqTitle: '',
+                table4PadHora: [],
+                table9SumHeader: [],
+                table9Suministros: [],
+                table5Controles: []
+            },
+            footer: {
+                textHoraUser: '',
+                textSalida: '',
+                textData: ''
+            }
+        }
+
         salida.controles.forEach(c => c.setGeocerca(this.geocercas))
         const controles = salida.controles.filter(c => c.control)
-        console.log(this.geocercas)
-        console.log('controles', controles, salida.controles)
+        // console.log(this.geocercas)
+        // console.log('controles', controles, salida.controles)
         let personal = []
 
-        this.structureData.header.textCompany = this.company.data
+        finalSalidaData.header.textCompany = this.company.data
         if (this.imprimirNombre && this.imprimirNombre.data === 'false') {
             if (this.imprimirCodigo && this.imprimirCodigo.data === 'false') {
                 // this.structureData.header['title'] = ''
@@ -177,7 +179,7 @@ export class SalidaViewComponent implements OnInit {
             ]
         }
 
-        this.structureData.header.table4Data1 = [
+        finalSalidaData.header.table4Data1 = [
             [
                 'RUTA',
                 this.ruta.codigo,
@@ -186,15 +188,10 @@ export class SalidaViewComponent implements OnInit {
             ],
             ['DIA', salida.inicio.toFormat('yy-MM-dd'), 'PLACA', salida.placa]
         ]
-        console.log('personal', [
-            'PAD',
-            salida.padron + '',
-            `F${salida.frecuencia}`,
-            salida.inicio.toFormat('HH:mm')
-        ])
-        this.structureData.header.table2Data2 = personal
 
-        this.structureData.header.table4Data3 = [
+        finalSalidaData.header.table2Data2 = personal
+
+        finalSalidaData.header.table4Data3 = [
             [
                 'PAD',
                 salida.padron + '',
@@ -203,24 +200,30 @@ export class SalidaViewComponent implements OnInit {
             ]
         ]
 
+        // const crls = controles.map(d => [
+        //     '|',
+        //     d.geocercaName.slice(0, 20),
+        //     '|',
+        //     d.hora.toFormat('HH:mm'),
+        //     '|'
+        // ])
         const crls = controles.map(d => [
-            '|',
             d.geocercaName.slice(0, 20),
-            '|',
-            d.hora.toFormat('HH:mm'),
-            '|'
+            d.hora.toFormat('HH:mm')
         ])
-        console.log('crls', crls)
-        this.structureData.body.table5Controles = [
-            ['', '', '', '', ''],
 
-            ['|', 'CONTROL', '|', 'HORA', '|'],
+        console.log('crls', crls)
+        finalSalidaData.body.table5Controles = [
+            // ['', '', '', '', ''],
+
+            ['CONTROL', 'HORA'],
             ...crls
         ]
+        console.log(finalSalidaData.body.table5Controles)
 
         if (salida.unidad.suministros.length > 0 && imprimirLiquidacion) {
-            this.structureData.body.textLiqTitle = 'LIQUIDACION DE BOLETOS'
-            this.structureData.body.table4PadHora = [
+            finalSalidaData.body.textLiqTitle = 'LIQUIDACION DE BOLETOS'
+            finalSalidaData.body.table4PadHora = [
                 [
                     'PAD',
                     salida.padron + '',
@@ -228,13 +231,13 @@ export class SalidaViewComponent implements OnInit {
                     salida.inicio.toFormat('HH:mm')
                 ]
             ]
-            this.structureData.body.table9SumHeader = [
+            finalSalidaData.body.table9SumHeader = [
                 ['INSPECT'],
                 ['LUGAR'],
                 ['HORA']
             ]
 
-            this.structureData.body.table9Suministros = [
+            finalSalidaData.body.table9Suministros = [
                 ...salida.unidad.suministros.map(s => {
                     const tacos = Math.floor((s.fin - s.actual) / 100)
                     let inicio =
@@ -247,17 +250,21 @@ export class SalidaViewComponent implements OnInit {
             ]
         }
 
-        this.structureData.footer.textHoraUser = `${DateTime.now().toFormat(
+        finalSalidaData.footer.textHoraUser = `${DateTime.now().toFormat(
             'HH:mm:ss'
         )} ${this.user.username.toUpperCase()}`
-        this.structureData.footer.textSalida = `SALIDA: ${salida.id}`
-        this.structureData.footer.textData = `Sistema de Gestion TCONTUR`
+        finalSalidaData.footer.textSalida = `SALIDA: ${salida.id}`
+        finalSalidaData.footer.textData = `Sistema de Gestion TCONTUR`
 
-        console.log('structureData', this.structureData)
+        console.log('structureData', finalSalidaData)
         console.log(
-            this.structureData.body.table9SumHeader
-            // dataToTablePos(this.structureData.body.table9Suministros, 11)
+            finalSalidaData.body.table9SumHeader,
+            finalSalidaData.body.table9Suministros.map(s =>
+                this.dataToTablePos(s, 11)
+            )
         )
+
+        this.dataForPrint = finalSalidaData
     }
 
     async generateCodeSalida (): Promise<EscPosEncoder> {
@@ -266,36 +273,43 @@ export class SalidaViewComponent implements OnInit {
             .size(3)
             .underline(false)
 
-        if (this.structureData.header.textCompany) {
-            codeSalida.line(this.structureData.header.textCompany).emptyLine(1)
+        if (this.dataForPrint.header.textCompany) {
+            codeSalida.line(this.dataForPrint.header.textCompany).emptyLine(1)
         }
 
-        if (this.structureData.header.table4Data1) {
+        if (this.dataForPrint.header.table4Data1) {
             codeSalida.align('left').table(
                 this.SelectPaperConfigStructure.T4D1width.map(item => ({
                     width: item.w
                 })),
-                [...this.structureData.header.table4Data1]
+                [...this.dataForPrint.header.table4Data1]
             )
         }
-        if (this.structureData.header.table2Data2) {
+        if (this.dataForPrint.header.table2Data2 && false) {
             codeSalida.align('left').table(
                 this.SelectPaperConfigStructure.T2D2width.map(items => ({
                     width: items.w
                 })),
-                [...this.structureData.header.table2Data2]
+                [...this.dataForPrint.header.table2Data2]
             )
         }
-        if (this.structureData.header.table4Data3) {
+        if (this.dataForPrint.header.table4Data3 && false) {
             codeSalida.size(2).table(
                 this.SelectPaperConfigStructure.T4D3width.map(item => ({
                     width: item.w,
                     align: item.a ? item.a : 'center'
                 })),
-                [...this.structureData.header.table4Data3]
+                [...this.dataForPrint.header.table4Data3]
             )
         }
-        if (this.structureData.body.table5Controles) {
+        if (this.dataForPrint.body.table5Controles && false) {
+            console.log(this.dataForPrint.body.table5Controles)
+            const controlesTable = this.dataForPrint.body.table5Controles.map(
+                item => this.dataToTablePos(item, 5)
+            )
+            console.log('controlesTable', controlesTable)
+            console.log(this.dataForPrint.body.table5Controles)
+
             codeSalida
                 .size(3)
                 .underline(1)
@@ -307,21 +321,21 @@ export class SalidaViewComponent implements OnInit {
                         width: item.w,
                         align: item.a ? item.a : 'center'
                     })),
-                    [...this.structureData.body.table5Controles]
+                    [...controlesTable]
                 )
                 .underline(false)
         }
 
-        if (this.structureData.body.textLiqTitle) {
+        if (this.dataForPrint.body.textLiqTitle && false) {
             codeSalida
                 .emptyLine(1)
                 .align('center')
                 .bold(true)
                 .size(3)
-                .line(this.structureData.body.textLiqTitle)
+                .line(this.dataForPrint.body.textLiqTitle)
         }
 
-        if (this.structureData.body.table4PadHora) {
+        if (this.dataForPrint.body.table4PadHora) {
             codeSalida.size(3).table(
                 [
                     {
@@ -341,26 +355,21 @@ export class SalidaViewComponent implements OnInit {
                         align: 'right'
                     }
                 ],
-                [...this.structureData.body.table4PadHora]
+                [...this.dataForPrint.body.table4PadHora]
             )
         }
 
-        if (this.structureData.body.table9Suministros) {
-            const columsT9 = this.structureData.body.table9SumHeader.map(s =>
-                dataToTablePos(s, 9)
+        if (this.dataForPrint.body.table9Suministros) {
+            const columsT9 = this.dataForPrint.body.table9SumHeader.map(s =>
+                this.dataToTablePos(s, 9)
             )
 
-            const columnT11sum = this.structureData.body.table9Suministros.map(
-                s => dataToTablePos(s, 11)
+            const columnT11sum = this.dataForPrint.body.table9Suministros.map(
+                s => this.dataToTablePos(s, 11)
             )
-
-            console.log(
-                'columsT9',
-                this.SelectPaperConfigStructure.T9SHwidth.map(item => ({
-                    width: item.w
-                }))
-            )
-            console.log('columsT9', [...columsT9])
+            console.log('asdddddddd', this.dataForPrint.body.table9Suministros)
+            console.log('columsT9', columnT11sum)
+            console.log('columsT9', columsT9)
             codeSalida
                 .bold(false)
                 .align('left')
@@ -375,30 +384,26 @@ export class SalidaViewComponent implements OnInit {
                     [['', '', '', '', '', '', '', '', ''], ...columsT9]
                 )
                 .table(
-                    this.SelectPaperConfigStructure.T9SBwidth.map(item => ({
+                    this.SelectPaperConfigStructure.T11SBwidth.map(item => ({
                         width: item.w
                     })),
 
-                    [...columnT11sum]
+                    columnT11sum
                 )
         }
 
-        if (this.structureData.footer.textHoraUser) {
+        if (this.dataForPrint.footer.textHoraUser) {
             codeSalida
                 .underline(false)
                 .emptyLine(1)
                 .align('center')
                 .size(3)
-                .line(this.structureData.footer.textHoraUser)
-                .line(this.structureData.footer.textSalida)
-                .line(this.structureData.footer.textData)
+                .line(this.dataForPrint.footer.textHoraUser)
+                .line(this.dataForPrint.footer.textSalida)
+                .line(this.dataForPrint.footer.textData)
         }
 
-        codeSalida
-            .size(3)
-
-            .emptyLine(1)
-            .cut()
+        codeSalida.size(3).emptyLine(1).cut()
         return codeSalida
     }
 
@@ -415,6 +420,27 @@ export class SalidaViewComponent implements OnInit {
     print () {
         this.getTicketUnicode()
     }
+    dataToTablePos (
+        data: string[],
+        numColumns: number,
+        empySpace?: string
+    ): string[] {
+        const transformedData: string[] = []
 
+        for (let i = 0; i < numColumns; i++) {
+            if (i % 2 === 0) {
+                transformedData.push('|') // Añadir celda vacía entre datos
+            } else {
+                const dataIndex = Math.floor(i / 2)
+                if (dataIndex < data.length) {
+                    transformedData.push(` ${data[dataIndex]}`)
+                } else {
+                    transformedData.push(empySpace ? empySpace : '') // Añadir celda vacía si no hay más datos
+                }
+            }
+        }
+
+        return transformedData
+    }
     salidaToUnicode (salida: any) {}
 }

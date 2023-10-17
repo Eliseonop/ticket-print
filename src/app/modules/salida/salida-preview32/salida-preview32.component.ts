@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core'
+import { SalidaPos } from '../utils/salidaData.interface'
 
 @Component({
     selector: 'app-salida-preview32',
@@ -6,7 +7,7 @@ import { Component, Input, OnInit } from '@angular/core'
     styleUrls: ['./salida-preview32.component.scss']
 })
 export class SalidaPreview32Component implements OnInit {
-    @Input() structureData: any
+    @Input() structureData: SalidaPos
 
     constructor () {}
 

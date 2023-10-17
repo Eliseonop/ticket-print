@@ -17,7 +17,9 @@ export class PrintGeneralModalComponent implements OnInit, AfterViewInit {
     blueEnable = false
     usbEnable = false
     printerInfo: InfoDevice
-    info: string
+    process: string
+
+    deviceType: DeviceType
     constructor (
         private printUsbService: PrintUsbService,
         private printBluetoothService: PrintBluetoothService,
@@ -57,6 +59,10 @@ export class PrintGeneralModalComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit (): void {
+        this.pgs.deviceType.subscribe((deviceType: DeviceType) => {
+            this.deviceType = deviceType
+        })
+
         this.usbEnable = this.printUsbService.isSupported
         this.blueEnable = this.printBluetoothService.isSupported
         console.log('this.usbEnable')
@@ -67,9 +73,14 @@ export class PrintGeneralModalComponent implements OnInit, AfterViewInit {
                 this.printerInfo = info
             })
 
-        this.pgs.info.subscribe((info: string) => {
-            this.info = info
+        this.pgs.process.subscribe((process: string) => {
+            this.process = process
         })
+    }
+
+    selectNone () {
+        this.pgs.selectedNone()
+        // this.pgs.servicePrinter = null
     }
 
     ngAfterViewInit (): void {}

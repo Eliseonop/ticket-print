@@ -8,7 +8,8 @@ import { PrintAbstractService } from './print-service-abstract'
 
 export enum DeviceType {
     USB = 'usb',
-    BLUETOOTH = 'bluetooth'
+    BLUETOOTH = 'bluetooth',
+    PDF = 'pdf'
 }
 
 @Injectable({
@@ -20,7 +21,7 @@ export class PrintGeneralService {
         | PrintAbstractService<USBDevice>
         | PrintAbstractService<BluetoothDevice>
     infoDevice = new BehaviorSubject<InfoDevice>(null)
-    info = new BehaviorSubject<string>('')
+    process = new BehaviorSubject<string>('')
     public isConnected: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
         false
     )
@@ -28,6 +29,14 @@ export class PrintGeneralService {
 
     isConnect (): Observable<boolean> {
         return this.servicePrinter?.isConnected
+    }
+
+    selectedNone (): void {
+        this.infoDevice.next(null)
+        this.isConnected.next(false)
+        if (this.servicePrinter) {
+            this.servicePrinter.disconnect()
+        }
     }
 
     // getDeviceInformation (): {
@@ -59,17 +68,17 @@ export class PrintGeneralService {
     ): void {
         this.servicePrinter = servicePrinter
         this.deviceType.next(deviceType)
-        this.servicePrinter.connect()
+        // this.servicePrinter.connect()
 
-        this.servicePrinter.isConnected.subscribe(result => {
-            console.log('isConnected', result)
-            this.isConnected.next(result)
-            this.infoDevice.next(this.servicePrinter.getInformation())
-        })
+        // this.servicePrinter.isConnected.subscribe(result => {
+        //     console.log('isConnected', result)
+        //     this.isConnected.next(result)
+        //     this.infoDevice.next(this.servicePrinter.getInformation())
+        // })
 
-        this.servicePrinter.info.subscribe((info: string) => {
-            this.info.next(info)
-        })
+        // this.servicePrinter.info.subscribe((info: string) => {
+        //     this.process.next(info)
+        // })
     }
 
     async print (data: Uint8Array) {

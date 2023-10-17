@@ -9,6 +9,7 @@ export abstract class PrintAbstractService<T> {
     public abstract reconnect(): Observable<T>
     public abstract write(data: any): Promise<void>
     public abstract getInformation(): InfoDevice
+    public abstract disconnect(): void
 
     public abstract get isSupported(): boolean
 }
