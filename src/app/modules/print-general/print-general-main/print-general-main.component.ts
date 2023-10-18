@@ -2,7 +2,6 @@ import { Component } from '@angular/core'
 import { MatDialog } from '@angular/material/dialog'
 import { PrintGeneralModalComponent } from '../print-general-modal/print-general-modal.component'
 import { PrintGeneralService } from '../print-general.service'
-import { filter, tap } from 'rxjs'
 
 @Component({
     selector: 'app-print-general-main',

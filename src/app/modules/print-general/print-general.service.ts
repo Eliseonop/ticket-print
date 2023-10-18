@@ -3,10 +3,7 @@
 import { Injectable } from '@angular/core'
 import { PrintBluetoothService } from '../print-bluetooth/print-bluetooth.service'
 import { InfoDevice, PrintUsbService } from '../print-html/print-usb.service'
-import { MatDialog, MatDialogRef } from '@angular/material/dialog'
-import { PrintGeneralModalComponent } from './print-general-modal/print-general-modal.component'
 import { BehaviorSubject, Observable, filter, switchMap, tap } from 'rxjs'
-import { PrintAbstractService } from './print-service-abstract'
 import { PdfService } from '../recibo/pdf.service'
 
 export enum DeviceType {
