@@ -24,7 +24,6 @@ export class ImpresoraComponent implements OnInit, AfterViewInit {
     blueEnable = false
     usbEnable = false
     printerInfo: InfoDevice
-
     constructor (
         public pgs: PrintGeneralService,
         private printUsbService: PrintUsbService,
@@ -41,11 +40,7 @@ export class ImpresoraComponent implements OnInit, AfterViewInit {
     ngOnInit () {
         this.pgs.deviceType
             .pipe(
-                filter(
-                    device =>
-                        device === DeviceType.USB ||
-                        device === DeviceType.BLUETOOTH
-                ),
+                filter(device => device !== null && device !== undefined),
                 debounceTime(10),
                 switchMap(() => {
                     console.log('device', this.pgs.deviceType.value)
@@ -81,16 +76,6 @@ export class ImpresoraComponent implements OnInit, AfterViewInit {
                     })
                 )
                 .subscribe()
-            // this.printUsbService
-            //     .reconnect()
-            //     .pipe(
-            //         filter(device => device !== null),
-            //         switchMap(() => {
-            //             // this.printerInfo = device
-            //             return this.pgs.selectPrinter(DeviceType.USB)
-            //         })
-            //     )
-            //     .subscribe()
         }
         if (device === DeviceType.BLUETOOTH) {
             this.pgs.selectPrinter(DeviceType.BLUETOOTH)
@@ -107,18 +92,11 @@ export class ImpresoraComponent implements OnInit, AfterViewInit {
                 .subscribe(() => {
                     console.log('conectado')
                 })
+        }
 
-            // this.printBluetoothService
-            //     .reconectar()
-            //     .pipe(
-            //         switchMap(device => {
-            //             return this.pgs.selectPrinter(
-            //                 this.printBluetoothService,
-            //                 DeviceType.BLUETOOTH
-            //             )
-            //         })
-            //     )
-            //     .subscribe()
+        if (device === DeviceType.PDF) {
+            this.pgs.selectPrinter(DeviceType.PDF)
+            this.pgs.reconectar().subscribe()
         }
     }
 }

@@ -3,7 +3,7 @@ import pdfMake from 'pdfmake/build/pdfmake'
 import pdfFonts from 'pdfmake/build/vfs_fonts'
 import { Injectable } from '@angular/core'
 import { Content, TDocumentDefinitions } from 'pdfmake/interfaces'
-import { Observable, tap } from 'rxjs'
+import { BehaviorSubject, Observable, tap } from 'rxjs'
 import { InfoDevice } from '../print-html/print-usb.service'
 import { DeviceType } from '../print-general/print-general.service'
 
@@ -15,9 +15,16 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs
     providedIn: 'root'
 })
 export class PdfService {
-    constructor (private http: HttpClient) {}
+    process = new BehaviorSubject<string>(
+        'Al momento de imprimir se abrirá una nueva pestaña con el PDF...'
+    )
+    infoDevice = new BehaviorSubject<InfoDevice>(null)
 
-    generateAndOpenPdf (docDefinition: TDocumentDefinitions) {
+    constructor (private http: HttpClient) {}
+    disconnect (): void {
+        this.infoDevice.next(null)
+    }
+    write (docDefinition: TDocumentDefinitions) {
         pdfMake.fonts = {
             JetBrains: {
                 normal: 'https://fonts.cdnfonts.com/s/98875/JetBrainsMonoRegular.woff',
@@ -40,6 +47,33 @@ export class PdfService {
         pdfMake.createPdf(docDefinition).open()
     }
 
+    reconectar (): Observable<boolean> {
+        return new Observable(observer => {
+            this.infoDevice.next(this.getInformation())
+            return observer.next(true)
+        })
+    }
+
+    resetService (): void {
+        this.infoDevice.next(null)
+        this.process.next('')
+        localStorage.removeItem('device')
+    }
+
+    requestDevice (): Observable<string> {
+        return new Observable(observer => {
+            this.infoDevice.next(this.getInformation())
+            return observer.next('PDF')
+        })
+    }
+
+    connect (): Observable<boolean> {
+        return new Observable(observer => {
+            this.infoDevice.next(this.getInformation())
+            return observer.next(true)
+        })
+    }
+
     getInformation (): InfoDevice {
         return {
             productName: 'PDF',
@@ -48,19 +82,4 @@ export class PdfService {
             type: DeviceType.PDF
         }
     }
-
-    // pdfBoletaLook (): Observable<Blob> {
-    //     const url = 'URL_DEL_ARCHIVO_PDF' // Reemplaza por la URL correcta del archivo PDF
-
-    //     return this.http.get(url, { responseType: 'blob' }).pipe(
-    //         tap(res => {
-    //             const file = new Blob([res], {
-    //                 type: 'application/pdf'
-    //             })
-    //             const fileURL = window.URL.createObjectURL(file)
-
-    //             window.open(fileURL, '_blank')
-    //         })
-    //     )
-    // }
 }

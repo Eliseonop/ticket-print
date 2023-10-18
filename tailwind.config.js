@@ -31,6 +31,11 @@ const themes = {
             ...colors.red,
             DEFAULT: colors.red[600]
         },
+        lime    : {
+            ...colors.lime,
+            DEFAULT: colors.lime[200]
+        },
+
         'on-warn': {
             500: colors.red['50']
         }

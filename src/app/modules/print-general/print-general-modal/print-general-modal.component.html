@@ -1,6 +1,6 @@
-<div class="p-0 md:p-1 flex rounded-lg flex-col w-80">
+<div class="p-0 md:p-1 flex rounded-lg flex-col w-fit md:w-80">
     <div
-        class="flex justify-between items-center border-b mb-3 border-gray-400 pb-2 gap-7"
+        class="flex justify-between w-full items-center border-b mb-3 border-gray-400 pb-2 gap-7"
     >
         <div class="text-lg font-medium">Configurar Impresora</div>
 
@@ -13,9 +13,11 @@
         </a>
     </div>
 
-    <div class="flex justify-center gap-14">
+    <div
+        class="flex flex-col md:flex-row justify-center gap-2 md:gap-14 w-full"
+    >
         <button
-            class="flex justify-between my-4 p-3 ring-1 rounded-lg"
+            class="flex my-1 md:my-4 p-3 ring-1 rounded-lg items-center justify-center"
             [ngClass]="{
                 ' hover:ring-2  cursor-pointer': usbEnable,
                 'opacity-50 cursor-not-allowed': !usbEnable,
@@ -27,7 +29,7 @@
             <mat-icon class="mat-18" matTooltip="Conexion USB">usb</mat-icon>
         </button>
         <button
-            class="flex justify-between my-4 p-3 ring-1 rounded-lg"
+            class="flex items-center justify-center my-1 md:my-4 p-3 ring-1 rounded-lg"
             [ngClass]="{
                 ' hover:ring-2  cursor-pointer': blueEnable,
                 'opacity-50 cursor-not-allowed': !blueEnable,
@@ -47,11 +49,11 @@
             >
         </button>
         <button
-            class="flex justify-between my-4 p-3 ring-1 rounded-lg"
+            class="flex items-center justify-center my-1 md:my-4 p-3 ring-1 rounded-lg"
             [ngClass]="{
                 'ring-4 ring-sky-600': printerInfo?.type === 'pdf'
             }"
-            (click)="selectNone()"
+            (click)="requestDevicePdf()"
             matTooltip="Otra impresora"
         >
             <mat-icon
@@ -67,6 +69,22 @@
         <!-- <div class="text-lg font-medium">Informacion de la impresora</div> -->
     </div>
 
+    <form [formGroup]="opcionesForm">
+        <div>Tamaño de papel:</div>
+        <mat-chip-listbox formControlName="withPrint">
+            <mat-chip-option [color]="'primary'" [value]="'80MM'"
+                >80 MM</mat-chip-option
+            >
+            <mat-chip-option [color]="'primary'" [value]="'58MM'"
+                >58 MM</mat-chip-option
+            >
+        </mat-chip-listbox>
+    </form>
+    <div
+        class="flex justify-between items-center border-b mb-3 border-gray-400 pb-2"
+    >
+        <!-- <div class="text-lg font-medium">Informacion de la impresora</div> -->
+    </div>
     <div class="w-full">
         <div class="bg-white p-2 rounded-lg overflow-auto">
             <span class="w-20 inline-block text-gray-500"> Estado: </span>
@@ -87,7 +105,7 @@
         >
             <!-- <div class="text-lg font-medium">Informacion de la impresora</div> -->
         </div>
-        <div class="bg-white p-2 rounded-lg overflow-auto">
+        <div class="bg-white p-2 rounded-lg overflow-auto w-full">
             Proceso : {{ process }}
         </div>
     </div>

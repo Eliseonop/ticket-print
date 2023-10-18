@@ -26,6 +26,6 @@ export class ReciboViewComponent implements OnInit {
 
     generateTicket () {
         console.log('Generando ticket')
-        this.pdfService.generateAndOpenPdf(this.ticketDefinition)
+        this.pdfService.write(this.ticketDefinition)
     }
 }

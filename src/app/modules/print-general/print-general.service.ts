@@ -13,6 +13,11 @@ export enum DeviceType {
     PDF = 'pdf'
 }
 
+export enum WithPrint {
+    MM80 = '80MM',
+    MM58 = '58MM'
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -20,10 +25,7 @@ export class PrintGeneralService {
     deviceType = new BehaviorSubject<DeviceType>(null)
     infoDevice = new BehaviorSubject<InfoDevice>(null)
     process = new BehaviorSubject<string>('')
-    infoPdf = {
-        estado: 'Usando Otra Impresora',
-        descripcion: 'Se abrira una nueva ventana con el recibo en formato PDF'
-    }
+    withPrint = new BehaviorSubject<WithPrint>(WithPrint.MM80)
     constructor (
         public pdfService: PdfService,
         public usbService: PrintUsbService,
@@ -37,30 +39,13 @@ export class PrintGeneralService {
             this.usbService.disconnect()
         } else if (currentDeviceType === DeviceType.BLUETOOTH) {
             this.bluetoothService.disconnect()
+        } else if (currentDeviceType === DeviceType.PDF) {
+            this.pdfService.disconnect()
         }
-
-        // Seleccionar PDF como dispositivo
-        this.selectPrinter(DeviceType.PDF)
     }
 
     selectPrinter (deviceType: DeviceType): void {
-        // console.log('deviceType', deviceType)
-        // this.resetServices()
-        // // if (this.deviceType.value === DeviceType.BLUETOOTH) {
-        // //     this.bluetoothService.disconnect()
-        // if (deviceType === DeviceType.PDF) {
-        //     this.infoDevice.next({
-        //         productName: 'PDF',
-        //         name: 'PDF',
-        //         estado: true,
-        //         type: DeviceType.PDF
-        //     })
-        // }
-        // // }
-        // // if (this.deviceType.value === DeviceType.USB) {
-
-        // // }
-
+        this.selectNoneAndDisconnect()
         this.deviceType.next(deviceType)
     }
 
@@ -69,6 +54,8 @@ export class PrintGeneralService {
             return this.usbService.infoDevice
         } else if (this.deviceType.value === DeviceType.BLUETOOTH) {
             return this.bluetoothService.infoDevice
+        } else if (this.deviceType.value === DeviceType.PDF) {
+            return this.pdfService.infoDevice
         }
     }
 
@@ -77,6 +64,8 @@ export class PrintGeneralService {
             return this.usbService.process
         } else if (this.deviceType.value === DeviceType.BLUETOOTH) {
             return this.bluetoothService.process
+        } else if (this.deviceType.value === DeviceType.PDF) {
+            return this.pdfService.process
         }
     }
 
@@ -96,6 +85,8 @@ export class PrintGeneralService {
                     return this.bluetoothService.connect()
                 })
             )
+        } else if (this.deviceType.value === DeviceType.PDF) {
+            return this.pdfService.requestDevice()
         }
     }
 
@@ -104,6 +95,8 @@ export class PrintGeneralService {
             return this.usbService.reconectar()
         } else if (this.deviceType.value === DeviceType.BLUETOOTH) {
             return this.bluetoothService.reconectar()
+        } else if (this.deviceType.value === DeviceType.PDF) {
+            return this.pdfService.reconectar()
         }
     }
 

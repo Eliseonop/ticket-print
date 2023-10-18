@@ -29,21 +29,6 @@ export class PrintUsbService {
     }
     constructor () {}
 
-    public getDevices (): Observable<USBDevice[]> {
-        return new Observable(observer => {
-            navigator?.usb?.getDevices().then(devices => {
-                console.log('devices', devices)
-                if (devices.length > 0) {
-                    this.process.next('Dispositivos encontrados')
-                    this.selectedDevice.next(devices[0])
-                    observer.next(devices)
-                } else {
-                    observer.next(null)
-                }
-            })
-        })
-    }
-
     public reconectar (): Observable<boolean> {
         return new Observable(observer => {
             navigator.usb.getDevices().then(async devices => {
@@ -82,8 +67,9 @@ export class PrintUsbService {
             console.log('Dispositivo no inicializado ')
             return
         }
-        this.selectedDevice.value.close()
-
+        if (this.selectedDevice.value?.opened) {
+            this.selectedDevice.value?.close()
+        }
         this.selectedDevice.next(null)
         this.infoDevice.next(null)
         this.process.next('')
@@ -138,9 +124,6 @@ export class PrintUsbService {
                     )
                 )
                 .then(() => {
-                    // console.log(device.configuration.interfaces[0].interfaceNumber)
-
-                    // console.log('device.configuration', device.configuration)
                     const endPoints: USBEndpoint[] =
                         device.configuration.interfaces[0].alternate.endpoints
 
@@ -163,40 +146,6 @@ export class PrintUsbService {
                     return observer.error(error)
                 })
         })
-
-        // // ver por consola si el device esta disponible
-        // console.log(this.selectedDevice.value.isochronousTransferOut)
-        // const device = this.selectedDevice.value
-        // // console.log(device)
-        // try {
-        //     this.info.next('Abriendo el dispositivo USB...')
-        //     await device.open()
-        //     await device.selectConfiguration(1)
-        //     await device.claimInterface(
-        //         device.configuration.interfaces[0].interfaceNumber
-        //     )
-
-        //     // console.log(device.configuration.interfaces[0].interfaceNumber)
-
-        //     // console.log('device.configuration', device.configuration)
-        //     const endPoints: USBEndpoint[] =
-        //         device.configuration.interfaces[0].alternate.endpoints
-
-        //     // console.log('endPoints', endPoints)
-        //     this.endPoint = endPoints.find(
-        //         (endPoint: any) => endPoint.direction === 'out'
-        //     )
-
-        //     this.info.next('Dispositivo conectado')
-
-        //     this.isConnected.next(true)
-        //     this.listenForUsbConnections()
-        //     return this.getInformation()
-        // } catch (error) {
-        //     this.info.next('Error al conectar con el dispositivo USB')
-
-        //     console.log(error)
-        // }
     }
 
     private listenForUsbConnections (): void {

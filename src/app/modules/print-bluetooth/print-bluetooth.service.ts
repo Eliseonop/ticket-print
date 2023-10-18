@@ -61,9 +61,12 @@ export class PrintBluetoothService {
             console.log('Dispositivo no inicializado ')
             return
         }
-        this.selectedDevice.value.gatt.disconnect()
-
+        if (!this.selectedDevice.value?.gatt.connected) {
+            this.selectedDevice.value?.gatt.disconnect()
+        }
         this.selectedDevice.next(null)
+        this.infoDevice.next(null)
+        // this.process.next('Dispositivo desconectado')
         localStorage.setItem('device', DeviceType.PDF)
     }
 
