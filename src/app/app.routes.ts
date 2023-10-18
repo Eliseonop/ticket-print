@@ -132,13 +132,7 @@ export const appRoutes: Route[] = [
                         m => m.PrintHtmlModule
                     )
             },
-            {
-                path: 'thermal-print',
-                loadChildren: () =>
-                    import(
-                        'app/modules/thermal-print/thermal-print.module'
-                    ).then(m => m.ThermalPrintsModule)
-            },
+
             {
                 path: 'salida',
                 loadChildren: () =>

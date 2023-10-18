@@ -1,3 +1,5 @@
+/// <reference types="@types/w3c-web-usb" />
+
 import { Injectable } from '@angular/core'
 import { PrintBluetoothService } from '../print-bluetooth/print-bluetooth.service'
 import { InfoDevice, PrintUsbService } from '../print-html/print-usb.service'

@@ -1,3 +1,5 @@
+/// <reference types="@types/w3c-web-usb" />
+
 import { Component, OnInit } from '@angular/core'
 import { SalidaService } from '../salida.service'
 import {
