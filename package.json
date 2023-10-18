@@ -46,7 +46,6 @@
         "qrcode-angular": "^1.2.0",
         "quill": "1.3.7",
         "rxjs": "7.8.1",
-        "thermal-printer-encoder": "^2.0.0",
         "tslib": "2.5.2",
         "zone.js": "0.13.0"
     },
