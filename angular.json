@@ -32,7 +32,10 @@
                             "crypto-js/hmac-sha256",
                             "crypto-js/enc-base64",
                             "flat",
-                            "quill"
+                            "quill",
+                            "pdfmake/build/pdfmake",
+                            "@manhnd/esc-pos-encoder",
+                            "pdfmake/build/vfs_fonts"
                         ],
                         "assets": [
                             "src/favicon-16x16.png",
