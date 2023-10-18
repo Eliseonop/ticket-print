@@ -49,7 +49,7 @@
         <button
             class="flex justify-between my-4 p-3 ring-1 rounded-lg"
             [ngClass]="{
-                'ring-4 ring-sky-600': deviceType === 'pdf'
+                'ring-4 ring-sky-600': printerInfo?.type === 'pdf'
             }"
             (click)="selectNone()"
             matTooltip="Otra impresora"
@@ -69,17 +69,18 @@
 
     <div class="w-full">
         <div class="bg-white p-2 rounded-lg overflow-auto">
-            Estado:
+            <span class="w-20 inline-block text-gray-500"> Estado: </span>
             <span class="font-bold">{{
                 printerInfo?.estado ? 'Conectado ' : 'Desconectado'
             }}</span>
         </div>
         <div class="bg-white p-2 rounded-lg overflow-auto">
-            Conexion:
+            <span class="w-20 inline-block text-gray-500"> Conexion: </span>
             <span class="font-bold">{{ printerInfo?.type }}</span>
         </div>
         <div class="bg-white p-2 rounded-lg overflow-auto">
-            Nombre: <span class="font-bold">{{ printerInfo?.name }}</span>
+            <span class="w-20 inline-block text-gray-500"> Nombre: </span>
+            <span class="font-bold">{{ printerInfo?.name }}</span>
         </div>
         <div
             class="flex justify-between items-center border-b mb-3 border-gray-400 pb-2"
@@ -90,16 +91,4 @@
             Proceso : {{ process }}
         </div>
     </div>
-
-    <!-- footer para cerrar cancelar o guardar   -->
-
-    <!-- <div
-        class="flex justify-between items-center border-b mb-3 border-gray-400 pb-2"
-    ></div> -->
-    <!-- <div class="flex justify-end my-3 gap-3">
-        <button mat-button color="warn">Cancelar</button>
-        <button mat-button>Guardar</button>
-
-        <button mat-button>Imprimir</button>
-    </div> -->
 </div>

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { BehaviorSubject, Observable, tap } from 'rxjs'
+import { BehaviorSubject, Observable, switchMap, tap, filter } from 'rxjs'
 import { PrintAbstractService } from '../print-general/print-service-abstract'
 import { DeviceType } from '../print-general/print-general.service'
 
@@ -13,31 +13,68 @@ export interface InfoDevice {
 @Injectable({
     providedIn: 'root'
 })
-export class PrintUsbService extends PrintAbstractService<USBDevice> {
+export class PrintUsbService {
     selectedDevice = new BehaviorSubject<USBDevice>(null)
-    info = new BehaviorSubject<string>('')
+    process = new BehaviorSubject<string>('')
+    infoDevice = new BehaviorSubject<InfoDevice>(null)
     private endPoint: USBEndpoint = {
         direction: 'out',
         endpointNumber: 2,
         packetSize: 64,
         type: 'bulk'
     }
-    isConnected: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
 
     public get isSupported (): boolean {
         return !!navigator.usb
     }
-    constructor () {
-        super()
+    constructor () {}
+
+    public getDevices (): Observable<USBDevice[]> {
+        return new Observable(observer => {
+            navigator?.usb?.getDevices().then(devices => {
+                console.log('devices', devices)
+                if (devices.length > 0) {
+                    this.process.next('Dispositivos encontrados')
+                    this.selectedDevice.next(devices[0])
+                    observer.next(devices)
+                } else {
+                    observer.next(null)
+                }
+            })
+        })
+    }
+
+    public reconectar (): Observable<boolean> {
+        return new Observable(observer => {
+            navigator.usb.getDevices().then(async devices => {
+                if (devices.length > 0) {
+                    this.process.next('Dispositivo encontrado')
+                    console.log('Dispositivo encontrado:', devices[0])
+                    this.selectedDevice.next(devices[0])
+                    this.infoDevice.next(this.getInformation())
+                    // return observer.next(this.selectedDevice.value)
+                    return observer.next(true)
+                } else {
+                    return observer.next(null)
+                }
+            })
+        })
     }
 
     getInformation (): InfoDevice {
         return {
             productName: this.selectedDevice.value.productName,
             name: this.selectedDevice.value.productName,
-            estado: this.isConnected.value,
+            estado: this.selectedDevice.value.opened,
             type: DeviceType.USB
         }
+    }
+
+    resetService (): void {
+        this.selectedDevice.next(null)
+        this.infoDevice.next(null)
+        this.process.next('')
+        localStorage.removeItem('device')
     }
 
     disconnect (): void {
@@ -46,27 +83,30 @@ export class PrintUsbService extends PrintAbstractService<USBDevice> {
             return
         }
         this.selectedDevice.value.close()
-        this.isConnected.next(false)
+
         this.selectedDevice.next(null)
+        this.infoDevice.next(null)
+        this.process.next('')
         localStorage.setItem('device', DeviceType.PDF)
     }
 
     requestDevice (): Observable<USBDevice> {
-        this.info.next('Buscando dispositivos USB...')
+        this.process.next('Buscando dispositivos USB...')
         return new Observable(observer => {
             navigator.usb
                 .requestDevice({
                     filters: []
                 })
                 .then(device => {
-                    this.info.next('Dispositivo seleccionado')
-                    console.log('Dispositivo seleccionado:', device)
+                    this.process.next('Dispositivo seleccionado')
                     this.selectedDevice.next(device)
+                    this.infoDevice.next(this.getInformation())
                     localStorage.setItem('device', DeviceType.USB)
                     return observer.next(this.selectedDevice.value)
                 })
                 .catch(error => {
-                    this.info.next('Error al seleccionar el dispositivo USB')
+                    this.process.next('Error al seleccionar el dispositivo USB')
+
                     console.error(
                         'Error al seleccionar el dispositivo USB:',
                         error
@@ -76,74 +116,96 @@ export class PrintUsbService extends PrintAbstractService<USBDevice> {
         })
     }
 
-    reconnect (): Observable<USBDevice> {
-        this.info.next('Buscando dispositivos USB...')
-        return new Observable(observer => {
-            navigator.usb.getDevices().then(async devices => {
-                if (devices.length > 0) {
-                    this.info.next('Dispositivo encontrado')
-                    console.log('Dispositivo encontrado:', devices[0])
-                    this.selectedDevice.next(devices[0])
-
-                    return observer.next(this.selectedDevice.value)
-                } else {
-                    return observer.next(null)
-                }
-            })
-        })
-    }
-
-    async connect () {
-        this.info.next('Conectando con el dispositivo USB...')
-
+    connect (): Observable<boolean> {
+        this.process.next('Conectando con el dispositivo USB...')
         if (!this.selectedDevice) {
             console.log('Dispositivo no inicializado ')
 
             return
         }
 
-        // ver por consola si el device esta disponible
         console.log(this.selectedDevice.value.isochronousTransferOut)
         const device = this.selectedDevice.value
-        // console.log(device)
-        try {
-            this.info.next('Abriendo el dispositivo USB...')
-            await device.open()
-            await device.selectConfiguration(1)
-            await device.claimInterface(
-                device.configuration.interfaces[0].interfaceNumber
-            )
 
-            // console.log(device.configuration.interfaces[0].interfaceNumber)
+        return new Observable(observer => {
+            this.selectedDevice.value
+                .open()
+                .then(() => this.selectedDevice.value.selectConfiguration(1))
+                .then(() =>
+                    this.selectedDevice.value.claimInterface(
+                        this.selectedDevice.value.configuration.interfaces[0]
+                            .interfaceNumber
+                    )
+                )
+                .then(() => {
+                    // console.log(device.configuration.interfaces[0].interfaceNumber)
 
-            // console.log('device.configuration', device.configuration)
-            const endPoints: USBEndpoint[] =
-                device.configuration.interfaces[0].alternate.endpoints
+                    // console.log('device.configuration', device.configuration)
+                    const endPoints: USBEndpoint[] =
+                        device.configuration.interfaces[0].alternate.endpoints
 
-            // console.log('endPoints', endPoints)
-            this.endPoint = endPoints.find(
-                (endPoint: any) => endPoint.direction === 'out'
-            )
+                    // console.log('endPoints', endPoints)
+                    this.endPoint = endPoints.find(
+                        (endPoint: any) => endPoint.direction === 'out'
+                    )
 
-            this.info.next('Dispositivo conectado')
+                    this.process.next('Dispositivo conectado')
 
-            this.isConnected.next(true)
+                    this.infoDevice.next(this.getInformation())
+                    this.listenForUsbConnections()
+                    return observer.next(true)
+                })
+                .catch(error => {
+                    this.process.next(
+                        'Error al conectar con el dispositivo USB'
+                    )
+                    console.log(error)
+                    return observer.error(error)
+                })
+        })
 
-            this.listenForUsbConnections()
-        } catch (error) {
-            this.info.next('Error al conectar con el dispositivo USB')
+        // // ver por consola si el device esta disponible
+        // console.log(this.selectedDevice.value.isochronousTransferOut)
+        // const device = this.selectedDevice.value
+        // // console.log(device)
+        // try {
+        //     this.info.next('Abriendo el dispositivo USB...')
+        //     await device.open()
+        //     await device.selectConfiguration(1)
+        //     await device.claimInterface(
+        //         device.configuration.interfaces[0].interfaceNumber
+        //     )
 
-            console.log(error)
-        }
+        //     // console.log(device.configuration.interfaces[0].interfaceNumber)
+
+        //     // console.log('device.configuration', device.configuration)
+        //     const endPoints: USBEndpoint[] =
+        //         device.configuration.interfaces[0].alternate.endpoints
+
+        //     // console.log('endPoints', endPoints)
+        //     this.endPoint = endPoints.find(
+        //         (endPoint: any) => endPoint.direction === 'out'
+        //     )
+
+        //     this.info.next('Dispositivo conectado')
+
+        //     this.isConnected.next(true)
+        //     this.listenForUsbConnections()
+        //     return this.getInformation()
+        // } catch (error) {
+        //     this.info.next('Error al conectar con el dispositivo USB')
+
+        //     console.log(error)
+        // }
     }
 
     private listenForUsbConnections (): void {
         if (navigator.usb) {
             navigator.usb.addEventListener('disconnect', () => {
-                this.isConnected.next(false)
+                this.infoDevice.next(this.getInformation())
             })
             navigator.usb.addEventListener('connect', () => {
-                this.isConnected.next(true)
+                this.infoDevice.next(this.getInformation())
             })
         } else {
             console.error(
@@ -153,32 +215,32 @@ export class PrintUsbService extends PrintAbstractService<USBDevice> {
     }
 
     public async write (data: Uint8Array): Promise<void> {
-        this.info.next('Imprimiendo...')
+        this.process.next('Imprimiendo...')
 
         if (!this.selectedDevice) {
-            this.info.next('Dispositivo no inicializado ')
+            this.process.next('Dispositivo no inicializado ')
 
             console.log('Dispositivo no inicializado ')
             return
         }
         if (!this.endPoint) {
-            this.info.next('Punto final no encontrado')
+            this.process.next('Punto final no encontrado')
 
             console.log(' punto final no encontrado')
             return
         }
 
         try {
-            this.info.next('Enviando datos al dispositivo USB...')
+            this.process.next('Enviando datos al dispositivo USB...')
 
             await this.selectedDevice.value.transferOut(
                 this.endPoint.endpointNumber,
                 data
             )
 
-            this.info.next('Impresión finalizada')
+            this.process.next('Impresión finalizada')
         } catch (error) {
-            this.info.next('Error al enviar datos al dispositivo USB')
+            this.process.next('Error al enviar datos al dispositivo USB')
 
             console.log('Error al imprimir en el dispositivo:', error)
         }

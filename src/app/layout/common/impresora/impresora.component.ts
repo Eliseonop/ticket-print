@@ -9,7 +9,7 @@ import {
     PrintUsbService
 } from 'app/modules/print-html/print-usb.service'
 import { MaterialModule } from 'app/modules/utils/shared/material.module'
-import { filter, switchMap, tap } from 'rxjs'
+import { debounce, debounceTime, filter, switchMap, tap } from 'rxjs'
 import { MatDialog } from '@angular/material/dialog'
 import { PrintGeneralModalComponent } from 'app/modules/print-general/print-general-modal/print-general-modal.component'
 
@@ -38,55 +38,87 @@ export class ImpresoraComponent implements OnInit, AfterViewInit {
         })
     }
 
-    ngOnInit () {}
+    ngOnInit () {
+        this.pgs.deviceType
+            .pipe(
+                filter(
+                    device =>
+                        device === DeviceType.USB ||
+                        device === DeviceType.BLUETOOTH
+                ),
+                debounceTime(10),
+                switchMap(() => {
+                    console.log('device', this.pgs.deviceType.value)
+                    return this.pgs.getInformation()
+                }),
+                tap(info => {
+                    this.printerInfo = info
+                })
+            )
+            .subscribe()
+    }
 
     ngAfterViewInit () {
         this.usbEnable = this.printUsbService.isSupported
         this.blueEnable = this.printBluetoothService.isSupported
 
-        this.pgs.infoDevice
-            .pipe(filter((info: InfoDevice) => info !== null))
-            .subscribe((info: InfoDevice) => {
-                console.log('info', info)
-                this.printerInfo = info
-            })
         const device = localStorage.getItem('device')
+
+        if (device === DeviceType.PDF) {
+            // this.pgs.selectPrinter(null, DeviceType.PDF).subscribe()
+        }
+
         console.log('device', device)
         if (device === DeviceType.USB) {
+            this.pgs.selectPrinter(DeviceType.USB)
             this.printUsbService
-                .reconnect()
+                .reconectar()
                 .pipe(
-                    filter((device: USBDevice) => device !== null),
-                    tap((device: USBDevice) => {
-                        this.pgs.selectPrinter(
-                            this.printUsbService,
-                            DeviceType.USB
-                        )
+                    filter(device => device !== null),
+                    switchMap(() => {
+                        // this.printerInfo = device
+                        return this.printUsbService.connect()
                     })
                 )
                 .subscribe()
+            // this.printUsbService
+            //     .reconnect()
+            //     .pipe(
+            //         filter(device => device !== null),
+            //         switchMap(() => {
+            //             // this.printerInfo = device
+            //             return this.pgs.selectPrinter(DeviceType.USB)
+            //         })
+            //     )
+            //     .subscribe()
         }
         if (device === DeviceType.BLUETOOTH) {
-            setTimeout(() => {
-                navigator.bluetooth
-                    .getDevices()
-                    .then((devices: BluetoothDevice[]) => {
-                        console.log('devices', devices)
-                        // this.printBluetoothService.devicesVinculados.next(devices)
-                    })
-            }, 5000)
+            this.pgs.selectPrinter(DeviceType.BLUETOOTH)
             this.printBluetoothService
-                .reconnect()
+                .reconectar()
                 .pipe(
-                    filter((device: BluetoothDevice) => device !== null),
-                    tap((device: BluetoothDevice) => {
-                        this.pgs.selectPrinter(
-                            this.printBluetoothService,
-                            DeviceType.BLUETOOTH
-                        )
+                    filter(device => device !== null),
+                    switchMap(() => {
+                        // this.printerInfo = device
+                        return this.printBluetoothService.connect()
                     })
                 )
-                .subscribe()
+
+                .subscribe(() => {
+                    console.log('conectado')
+                })
+
+            // this.printBluetoothService
+            //     .reconectar()
+            //     .pipe(
+            //         switchMap(device => {
+            //             return this.pgs.selectPrinter(
+            //                 this.printBluetoothService,
+            //                 DeviceType.BLUETOOTH
+            //             )
+            //         })
+            //     )
+            //     .subscribe()
         }
     }
 }

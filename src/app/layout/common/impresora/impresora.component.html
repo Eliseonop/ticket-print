@@ -4,9 +4,28 @@
 -->
 
 <div (click)="openModalPrint()">
-    <span *ngIf="printerInfo; else elseTemplate">
+    <span [ngSwitch]="printerInfo.type" *ngIf="printerInfo; else elseTemplate">
         <button
+            *ngSwitchCase="'usb'"
             mat-icon-button
+            class="mat-18"
+            [matTooltip]="
+                printerInfo?.productName +
+                ' ' +
+                ' está ' +
+                (printerInfo?.estado ? 'conectado' : 'desconectado')
+            "
+        >
+            <mat-icon
+                [ngClass]="{
+                'text-sky-400': printerInfo?.estado,
+            }"
+                >usb</mat-icon
+            >
+        </button>
+        <button
+            *ngSwitchCase="'bluetooth'"
+            class="mat-18"
             [matTooltip]="
                 printerInfo?.productName +
                 ' ' +
@@ -18,15 +37,44 @@
                 [ngClass]="{
                     'text-sky-400': printerInfo?.estado,
                 }"
-                >{{ printerInfo.type }}</mat-icon
+                >bluetooth</mat-icon
             >
-            <!-- <span class="text-xs">{{ printerInfo.name }}</span> -->
         </button>
-    </span>
+        <button
+            *ngSwitchCase="'pdf'"
+            mat-icon-button
+            class="mat-18"
+            [matTooltip]="
+                printerInfo?.productName +
+                ' ' +
+                ' está ' +
+                (printerInfo?.estado ? 'conectado' : 'desconectado')
+            "
+        >
+            <mat-icon
+                [ngClass]="{
+                    'text-sky-400': printerInfo?.estado,
+                }"
+                >print</mat-icon
+            >
+        </button>
 
-    <ng-template #elseTemplate>
-        <button mat-icon-button matTooltip="Impresora desconectada">
+        <!-- <button
+            mat-icon-button
+            matTooltip="Metodo de Impresion No Seleccionado"
+            *ngSwitchDefault
+        >
             <mat-icon>print_disabled</mat-icon>
-        </button>
+        </button> -->
+    </span>
+    <ng-template #elseTemplate>
+        <span>
+            <button
+                mat-icon-button
+                matTooltip="Metodo de Impresion No Seleccionado"
+            >
+                <mat-icon>print_disabled</mat-icon>
+            </button>
+        </span>
     </ng-template>
 </div>

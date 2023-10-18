@@ -5,6 +5,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog'
 import { PrintGeneralModalComponent } from './print-general-modal/print-general-modal.component'
 import { BehaviorSubject, Observable, filter, switchMap, tap } from 'rxjs'
 import { PrintAbstractService } from './print-service-abstract'
+import { PdfService } from '../recibo/pdf.service'
 
 export enum DeviceType {
     USB = 'usb',
@@ -17,73 +18,100 @@ export enum DeviceType {
 })
 export class PrintGeneralService {
     deviceType = new BehaviorSubject<DeviceType>(null)
-    servicePrinter:
-        | PrintAbstractService<USBDevice>
-        | PrintAbstractService<BluetoothDevice>
     infoDevice = new BehaviorSubject<InfoDevice>(null)
     process = new BehaviorSubject<string>('')
-    public isConnected: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
-        false
-    )
-    constructor (public matDiaglog: MatDialog) {}
+    infoPdf = {
+        estado: 'Usando Otra Impresora',
+        descripcion: 'Se abrira una nueva ventana con el recibo en formato PDF'
+    }
+    constructor (
+        public pdfService: PdfService,
+        public usbService: PrintUsbService,
+        public bluetoothService: PrintBluetoothService
+    ) {}
+    selectNoneAndDisconnect (): void {
+        const currentDeviceType = this.deviceType.value
 
-    isConnect (): Observable<boolean> {
-        return this.servicePrinter?.isConnected
+        // Desconectar el dispositivo actual si está conectado
+        if (currentDeviceType === DeviceType.USB) {
+            this.usbService.disconnect()
+        } else if (currentDeviceType === DeviceType.BLUETOOTH) {
+            this.bluetoothService.disconnect()
+        }
+
+        // Seleccionar PDF como dispositivo
+        this.selectPrinter(DeviceType.PDF)
     }
 
-    selectedNone (): void {
-        this.infoDevice.next(null)
-        this.isConnected.next(false)
-        if (this.servicePrinter) {
-            this.servicePrinter.disconnect()
+    selectPrinter (deviceType: DeviceType): void {
+        // console.log('deviceType', deviceType)
+        // this.resetServices()
+        // // if (this.deviceType.value === DeviceType.BLUETOOTH) {
+        // //     this.bluetoothService.disconnect()
+        // if (deviceType === DeviceType.PDF) {
+        //     this.infoDevice.next({
+        //         productName: 'PDF',
+        //         name: 'PDF',
+        //         estado: true,
+        //         type: DeviceType.PDF
+        //     })
+        // }
+        // // }
+        // // if (this.deviceType.value === DeviceType.USB) {
+
+        // // }
+
+        this.deviceType.next(deviceType)
+    }
+
+    getInformation (): Observable<InfoDevice> {
+        if (this.deviceType.value === DeviceType.USB) {
+            return this.usbService.infoDevice
+        } else if (this.deviceType.value === DeviceType.BLUETOOTH) {
+            return this.bluetoothService.infoDevice
         }
     }
 
-    // getDeviceInformation (): {
-    //     productName: string
-    //     name: string
-    // } {
-    //     if (this.deviceType === DeviceType.USB) {
-    //         // const service = this.servicePrinter as PrintUsbService
-    //         const name = this.servicePrinter.selectedDevice.productName
-    //         return {
-    //             productName: name,
-    //             name: name
-    //         }
-    //     } else if (this.deviceType === DeviceType.BLUETOOTH) {
-    //         // const service = this.servicePrinter as PrintBluetoothService
-    //         const name = this.servicePrinter.selectedDevice.name
-    //         return {
-    //             productName: name,
-    //             name: name
-    //         }
-    //     }
-    // }
-
-    selectPrinter (
-        servicePrinter:
-            | PrintAbstractService<USBDevice>
-            | PrintAbstractService<BluetoothDevice>,
-        deviceType: DeviceType
-    ): void {
-        this.servicePrinter = servicePrinter
-        this.deviceType.next(deviceType)
-        // this.servicePrinter.connect()
-
-        // this.servicePrinter.isConnected.subscribe(result => {
-        //     console.log('isConnected', result)
-        //     this.isConnected.next(result)
-        //     this.infoDevice.next(this.servicePrinter.getInformation())
-        // })
-
-        // this.servicePrinter.info.subscribe((info: string) => {
-        //     this.process.next(info)
-        // })
+    getProgress (): Observable<string> {
+        if (this.deviceType.value === DeviceType.USB) {
+            return this.usbService.process
+        } else if (this.deviceType.value === DeviceType.BLUETOOTH) {
+            return this.bluetoothService.process
+        }
     }
 
-    async print (data: Uint8Array) {
-        if (this.servicePrinter) {
-            await this.servicePrinter.write(data)
+    requestDevice (): Observable<any> {
+        if (this.deviceType.value === DeviceType.USB) {
+            return this.usbService.requestDevice().pipe(
+                filter((device: USBDevice) => !!device),
+                switchMap(() => {
+                    return this.usbService.connect()
+                })
+            )
+        } else if (this.deviceType.value === DeviceType.BLUETOOTH) {
+            return this.bluetoothService.requestDevice().pipe(
+                filter((device: BluetoothDevice) => !!device),
+
+                switchMap(() => {
+                    return this.bluetoothService.connect()
+                })
+            )
+        }
+    }
+
+    reconectar (): Observable<boolean> {
+        if (this.deviceType.value === DeviceType.USB) {
+            return this.usbService.reconectar()
+        } else if (this.deviceType.value === DeviceType.BLUETOOTH) {
+            return this.bluetoothService.reconectar()
+        }
+    }
+
+    print (data: any): void {
+        if (this.deviceType.value === DeviceType.USB) {
+            this.usbService.write(data)
+        } else if (this.deviceType.value === DeviceType.BLUETOOTH) {
+            this.bluetoothService.write(data)
         }
     }
 }

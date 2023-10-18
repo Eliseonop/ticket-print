@@ -4,6 +4,8 @@ import pdfFonts from 'pdfmake/build/vfs_fonts'
 import { Injectable } from '@angular/core'
 import { Content, TDocumentDefinitions } from 'pdfmake/interfaces'
 import { Observable, tap } from 'rxjs'
+import { InfoDevice } from '../print-html/print-usb.service'
+import { DeviceType } from '../print-general/print-general.service'
 
 // import {} from ''
 
@@ -36,6 +38,15 @@ export class PdfService {
 
         // // Para abrir el PDF en una nueva pestaña
         pdfMake.createPdf(docDefinition).open()
+    }
+
+    getInformation (): InfoDevice {
+        return {
+            productName: 'PDF',
+            name: 'PDF',
+            estado: true,
+            type: DeviceType.PDF
+        }
     }
 
     // pdfBoletaLook (): Observable<Blob> {
