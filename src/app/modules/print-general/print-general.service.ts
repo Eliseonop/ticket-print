@@ -17,6 +17,8 @@ export enum WithPrint {
     MM58 = '58MM'
 }
 
+const PRINTLOCAL = 'WITHPRINT'
+
 @Injectable({
     providedIn: 'root'
 })
@@ -24,12 +26,27 @@ export class PrintGeneralService {
     deviceType = new BehaviorSubject<DeviceType>(null)
     infoDevice = new BehaviorSubject<InfoDevice>(null)
     process = new BehaviorSubject<string>('')
-    withPrint = new BehaviorSubject<WithPrint>(WithPrint.MM80)
+    withPrint: WithPrint
     constructor (
         public pdfService: PdfService,
         public usbService: PrintUsbService,
         public bluetoothService: PrintBluetoothService
-    ) {}
+    ) {
+        this.withPrint = localStorage.getItem(PRINTLOCAL)
+            ? (localStorage.getItem(PRINTLOCAL) as WithPrint)
+            : null
+    }
+
+    getWithPrint (): WithPrint {
+        return this.withPrint
+    }
+
+    setWithPrint (ancho: WithPrint): void {
+        this.withPrint = ancho
+        // Guarda el valor en el Local Storage
+        localStorage.setItem(PRINTLOCAL, ancho)
+    }
+
     selectNoneAndDisconnect (): void {
         const currentDeviceType = this.deviceType.value
 

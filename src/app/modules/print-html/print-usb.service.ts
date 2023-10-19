@@ -1,4 +1,4 @@
-// 
+//
 import { Injectable } from '@angular/core'
 import { BehaviorSubject, Observable, switchMap, tap, filter } from 'rxjs'
 import { DeviceType } from '../print-general/print-general.service'
@@ -77,7 +77,7 @@ export class PrintUsbService {
     }
 
     requestDevice (): Observable<USBDevice> {
-        this.process.next('Buscando dispositivos USB...')
+        this.process.next('Buscando dispositivos...')
         return new Observable(observer => {
             navigator.usb
                 .requestDevice({
@@ -91,19 +91,16 @@ export class PrintUsbService {
                     return observer.next(this.selectedDevice.value)
                 })
                 .catch(error => {
-                    this.process.next('Error al seleccionar el dispositivo USB')
+                    this.process.next('Error al seleccionar')
 
-                    console.error(
-                        'Error al seleccionar el dispositivo USB:',
-                        error
-                    )
+                    console.error('Ningún dispositivo seleccionado.', error)
                     return observer.error(error)
                 })
         })
     }
 
     connect (): Observable<boolean> {
-        this.process.next('Conectando con el dispositivo USB...')
+        this.process.next('Conectando hardware USB...')
         if (!this.selectedDevice) {
             console.log('Dispositivo no inicializado ')
 
@@ -139,9 +136,7 @@ export class PrintUsbService {
                     return observer.next(true)
                 })
                 .catch(error => {
-                    this.process.next(
-                        'Error al conectar con el dispositivo USB'
-                    )
+                    this.process.next('Error de conexión USB')
                     console.log(error)
                     return observer.error(error)
                 })
@@ -167,20 +162,20 @@ export class PrintUsbService {
         this.process.next('Imprimiendo...')
 
         if (!this.selectedDevice) {
-            this.process.next('Dispositivo no inicializado ')
+            this.process.next('Dispositivo desconectado')
 
             console.log('Dispositivo no inicializado ')
             return
         }
         if (!this.endPoint) {
-            this.process.next('Punto final no encontrado')
+            this.process.next('Salida no encontrada')
 
             console.log(' punto final no encontrado')
             return
         }
 
         try {
-            this.process.next('Enviando datos al dispositivo USB...')
+            this.process.next('Imprimiendo...')
 
             await this.selectedDevice.value.transferOut(
                 this.endPoint.endpointNumber,
@@ -189,9 +184,9 @@ export class PrintUsbService {
 
             this.process.next('Impresión finalizada')
         } catch (error) {
-            this.process.next('Error al enviar datos al dispositivo USB')
+            this.process.next('Error de impresión')
 
-            console.log('Error al imprimir en el dispositivo:', error)
+            // console.log('Error al imprimir en el dispositivo:', error)
         }
     }
 }

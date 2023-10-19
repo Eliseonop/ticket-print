@@ -38,10 +38,14 @@ export class PrintGeneralModalComponent implements OnInit, AfterViewInit {
         public fb: FormBuilder
     ) {}
     ngOnInit (): void {
+        if (this.pgs.withPrint) {
+            this.opcionesForm.patchValue({ withPrint: this.pgs.withPrint })
+        }
+
         this.opcionesForm.valueChanges.subscribe(value => {
             // console.log('value', value.withPrint as WithPrint)
             console.log('value', value.withPrint)
-            this.pgs.withPrint.next(value.withPrint)
+            this.pgs.setWithPrint(value.withPrint)
         })
 
         this.usbEnable = this.printUsbService.isSupported

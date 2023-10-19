@@ -130,7 +130,7 @@ export class PrintBluetoothService {
     listenForDisconnect (): void {}
 
     public requestDevice (): Observable<BluetoothDevice> {
-        this.process.next('Buscando dispositivos Bluetooth')
+        this.process.next('Buscando dispositivos...')
         return new Observable(observer => {
             navigator.bluetooth
                 .requestDevice({
@@ -148,7 +148,7 @@ export class PrintBluetoothService {
                     return observer.next(result)
                 })
                 .catch(error => {
-                    this.process.next('Error al seleccionar el dispositivo')
+                    this.process.next('Dispocitivo no seleccionado')
                     return observer.error(error)
                 })
         })

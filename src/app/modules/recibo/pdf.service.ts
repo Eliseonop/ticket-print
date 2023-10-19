@@ -15,9 +15,7 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs
     providedIn: 'root'
 })
 export class PdfService {
-    process = new BehaviorSubject<string>(
-        'Al momento de imprimir se abrirá una nueva pestaña con el PDF...'
-    )
+    process = new BehaviorSubject<string>('Abre una pestaña con el PDF')
     infoDevice = new BehaviorSubject<InfoDevice>(null)
 
     constructor (private http: HttpClient) {}
