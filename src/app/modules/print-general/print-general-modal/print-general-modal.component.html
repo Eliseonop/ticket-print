@@ -11,14 +11,14 @@
         </button>
     </div>
     <div class="flex flex-col flex-auto p-6 sm:p-4 overflow-y-auto">
-        <div class="font-medium flex items-center justify-between mb-2">
+        <!-- <div class="font-medium flex items-center justify-between mb-2">
             Tipo de conexion:
-        </div>
+        </div> -->
         <div
             class="flex flex-col md:flex-row justify-center gap-2 md:gap-10 w-full"
         >
             <button
-                class="flex my-1 md:my-4 py-3 px-5 ring-1 rounded-lg items-center justify-center"
+                class="flex my-1 md:my-4 py-3 px-6 ring-1 rounded-lg items-center justify-center"
                 [ngClass]="{
                     ' hover:ring-2  cursor-pointer': usbEnable,
                     'opacity-50 cursor-not-allowed': !usbEnable,
@@ -32,7 +32,7 @@
                 >
             </button>
             <button
-                class="flex items-center justify-center my-1 md:my-4 py-3 px-5 ring-1 rounded-lg"
+                class="flex items-center justify-center my-1 md:my-4 py-3 px-6 ring-1 rounded-lg"
                 [ngClass]="{
                     ' hover:ring-2  cursor-pointer': blueEnable,
                     'opacity-50 cursor-not-allowed': !blueEnable,
@@ -52,7 +52,7 @@
                 >
             </button>
             <button
-                class="flex items-center justify-center my-1 md:my-4 py-3 px-5 ring-1 rounded-lg"
+                class="flex items-center justify-center my-1 md:my-4 py-3 px-6 ring-1 rounded-lg"
                 [ngClass]="{
                     'ring-4 ring-sky-600': printerInfo?.type === 'pdf'
                 }"
@@ -66,32 +66,32 @@
             </button>
         </div>
         <!-- n pre con informacion de la impresora -->
-        <div
+        <!-- <div
             class="flex justify-between items-center border-b mb-3 border-gray-400 pb-2"
-        >
-            <!-- <div class="text-lg font-medium">Informacion de la impresora</div> -->
-        </div>
-        <div class="font-medium flex items-center justify-between mb-2">
-            Papel:
-        </div>
+        ></div> -->
+        <!-- <div class="font-medium flex items-center justify-between">Papel:</div> -->
         <form
             [formGroup]="opcionesForm"
-            class="flex flex-col items-center justify-center w-full"
+            class="flex flex-col items-center justify-center my-4 w-full"
         >
             <mat-chip-listbox formControlName="withPrint">
-                <mat-chip-option [color]="'primary'" [value]="'80MM'"
+                <mat-chip-option
+                    matTooltip="Tamaño de papel de 80 mm"
+                    [color]="'primary'"
+                    [value]="'80MM'"
                     >80 mm</mat-chip-option
                 >
-                <mat-chip-option [color]="'primary'" [value]="'58MM'"
+                <mat-chip-option
+                    matTooltip="Tamaño de papel de 58 mm"
+                    [color]="'primary'"
+                    [value]="'58MM'"
                     >58 mm</mat-chip-option
                 >
             </mat-chip-listbox>
         </form>
-        <div
+        <!-- <div
             class="flex justify-between items-center border-b mb-3 border-gray-400 pb-2"
-        >
-            <!-- <div class="text-lg font-medium">Informacion de la impresora</div> -->
-        </div>
+        ></div> -->
         <div class="w-full">
             <div class="bg-white p-2 rounded-lg overflow-auto">
                 <span class="w-20 inline-block text-gray-500"> Estado: </span>

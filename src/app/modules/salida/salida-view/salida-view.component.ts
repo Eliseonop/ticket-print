@@ -12,7 +12,10 @@ import { UserModel } from 'app/modules/recibo/models/reciboDetalle.models'
 import EscPosEncoder from '@manhnd/esc-pos-encoder'
 import { GeocercaService } from '../geocerca.service'
 import { PrintUsbService } from 'app/modules/print-html/print-usb.service'
-import { PrintGeneralService } from 'app/modules/print-general/print-general.service'
+import {
+    PrintGeneralService,
+    WithPrint
+} from 'app/modules/print-general/print-general.service'
 import { map } from 'rxjs'
 import { SalidaPos } from '../utils/salidaData.interface'
 
@@ -25,8 +28,52 @@ export class SalidaViewComponent implements OnInit {
     // printerType: PrinterType[] = [PrinterType['58mm'], PrinterType['80mm']]
 
     // selectedPrinterType = PrinterType['58mm']
+    estructureFor32 = {
+        T4D1width: [{ w: 8 }, { w: 12 }, { w: 8 }, { w: 4 }],
+        T2D2width: [{ w: 8 }, { w: 24 }],
+        T4D3width: [{ w: 3 }, { w: 3 }, { w: 3 }, { w: 3, a: 'right' }],
+        T5Cwidth: [
+            { w: 2, a: 'left' },
+            { w: 20, a: 'center' },
+            { w: 2, a: 'center' },
+            { w: 5, a: 'center' },
+            { w: 1, a: 'right' }
+        ],
+        T4PHwidth: [
+            { w: 3, a: 'left' },
+            { w: 3, a: 'left' },
+            { w: 3, a: 'right' },
+            { w: 3, a: 'right' }
+        ],
+        T9SHwidth: [
+            { w: 1 },
+            { w: 14 },
+            { w: 1 },
+            { w: 4 },
+            { w: 1 },
+            { w: 4 },
+            { w: 1 },
+            { w: 4 },
+            { w: 1 }
+        ],
+        T11SBwidth: [
+            { w: 1 },
+            { w: 4 },
+            { w: 1 },
+            { w: 9 },
+            { w: 1 },
+            { w: 4 },
+            { w: 1 },
+            { w: 4 },
+            { w: 1 },
+            { w: 4 },
+            { w: 1 }
+        ]
+    }
 
-    SelectPaperConfigStructure = {
+    SelectPaperConfigStructure = null
+
+    estructureFor48 = {
         T4D1width: [{ w: 10 }, { w: 14 }, { w: 10 }, { w: 14 }],
         T2D2width: [{ w: 10 }, { w: 38 }],
         T4D3width: [{ w: 6 }, { w: 6 }, { w: 6 }, { w: 6, a: 'right' }],
@@ -287,7 +334,7 @@ export class SalidaViewComponent implements OnInit {
                 [...this.dataForPrint.header.table4Data1]
             )
         }
-        if (this.dataForPrint.header.table2Data2 && false) {
+        if (this.dataForPrint.header.table2Data2) {
             codeSalida.align('left').table(
                 this.SelectPaperConfigStructure.T2D2width.map(items => ({
                     width: items.w
@@ -295,7 +342,7 @@ export class SalidaViewComponent implements OnInit {
                 [...this.dataForPrint.header.table2Data2]
             )
         }
-        if (this.dataForPrint.header.table4Data3 && false) {
+        if (this.dataForPrint.header.table4Data3) {
             codeSalida.size(2).table(
                 this.SelectPaperConfigStructure.T4D3width.map(item => ({
                     width: item.w,
@@ -304,7 +351,7 @@ export class SalidaViewComponent implements OnInit {
                 [...this.dataForPrint.header.table4Data3]
             )
         }
-        if (this.dataForPrint.body.table5Controles && false) {
+        if (this.dataForPrint.body.table5Controles) {
             console.log(this.dataForPrint.body.table5Controles)
             const controlesTable = this.dataForPrint.body.table5Controles.map(
                 item => this.dataToTablePos(item, 5)
@@ -410,6 +457,14 @@ export class SalidaViewComponent implements OnInit {
     }
 
     async getTicketUnicode () {
+        if (this.pgs.withPrint === WithPrint.MM80) {
+            this.SelectPaperConfigStructure = this.estructureFor48
+        } else if (this.pgs.withPrint === WithPrint.MM58) {
+            this.SelectPaperConfigStructure = this.estructureFor32
+        }
+        if (!this.pgs.withPrint) {
+            console.log('No se ha seleccionado el tamaño de papel')
+        }
         const salida = (await this.generateCodeSalida()).encode()
         this.pgs.print(salida)
     }

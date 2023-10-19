@@ -1,6 +1,13 @@
 //
 import { Injectable } from '@angular/core'
-import { BehaviorSubject, Observable, switchMap, tap, filter } from 'rxjs'
+import {
+    BehaviorSubject,
+    Observable,
+    switchMap,
+    tap,
+    filter,
+    Observer
+} from 'rxjs'
 import { DeviceType } from '../print-general/print-general.service'
 
 export interface InfoDevice {
