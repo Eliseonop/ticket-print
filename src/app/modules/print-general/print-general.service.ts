@@ -118,6 +118,9 @@ export class PrintGeneralService {
     }
 
     print (data: any): void {
+        if (!this.withPrint) {
+            throw new Error('No se ha seleccionado el ancho de impresión')
+        }
         if (this.deviceType.value === DeviceType.USB) {
             this.usbService.write(data)
         } else if (this.deviceType.value === DeviceType.BLUETOOTH) {
