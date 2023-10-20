@@ -41,6 +41,7 @@ export class PrintBluetoothService {
                     this.selectedDevice.value.addEventListener(
                         'advertisementreceived',
                         event => {
+                            console.log(event)
                             this.process.next('Sincrionizando dispositivo...')
                             this.selectedDevice.next(event.device)
                             this.controller.abort()
@@ -99,7 +100,7 @@ export class PrintBluetoothService {
                         event.target
                     )
                     this.process.next('El dispositivo Bluetooth se desconectó')
-                    this.infoDevice.next(null)
+                    this.infoDevice.next(this.getInformation())
                     return observer.error(false)
                 }
             )

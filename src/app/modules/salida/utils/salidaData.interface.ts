@@ -1,16 +1,16 @@
 export interface SalidaPos {
     header: {
         textCompany: string
-        table4Data1: string[][]
-        table2Data2: string[][]
-        table4Data3: string[][]
+        rutaLado: string[][]
+        condCobr: string[][]
+        padHora: string[][]
     }
     body: {
-        table5Controles: string[][]
-        textLiqTitle: string
-        table4PadHora: string[][]
-        table9SumHeader: string[][]
-        table9Suministros: string[][]
+        controles: string[][]
+        liqBoletos: string
+        padHora2: string[][]
+        suministrosHead: string[][]
+        suministrosBody: string[][]
     }
     footer: {
         textHoraUser: string

@@ -5,6 +5,7 @@ import { PrintBluetoothService } from '../print-bluetooth/print-bluetooth.servic
 import { InfoDevice, PrintUsbService } from '../print-html/print-usb.service'
 import { BehaviorSubject, Observable, filter, switchMap, tap } from 'rxjs'
 import { PdfService } from '../recibo/pdf.service'
+import { ToastrService } from 'ngx-toastr'
 
 export enum DeviceType {
     USB = 'usb',

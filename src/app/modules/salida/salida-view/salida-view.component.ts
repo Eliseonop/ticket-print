@@ -18,6 +18,10 @@ import {
 } from 'app/modules/print-general/print-general.service'
 import { map } from 'rxjs'
 import { SalidaPos } from '../utils/salidaData.interface'
+import { ToastrService } from 'ngx-toastr'
+import { TableStructure } from '../utils/anchoConfig.interface'
+import { estructureFor48 } from '../utils/withCol48'
+import { estructureFor32 } from '../utils/withCol32'
 
 @Component({
     selector: 'app-salida-view',
@@ -25,96 +29,7 @@ import { SalidaPos } from '../utils/salidaData.interface'
     styleUrls: ['./salida-view.component.scss']
 })
 export class SalidaViewComponent implements OnInit {
-    // printerType: PrinterType[] = [PrinterType['58mm'], PrinterType['80mm']]
-
-    // selectedPrinterType = PrinterType['58mm']
-    estructureFor32 = {
-        T4D1width: [{ w: 8 }, { w: 12 }, { w: 8 }, { w: 4 }],
-        T2D2width: [{ w: 8 }, { w: 24 }],
-        T4D3width: [{ w: 3 }, { w: 3 }, { w: 3 }, { w: 3, a: 'right' }],
-        T5Cwidth: [
-            { w: 2, a: 'left' },
-            { w: 20, a: 'center' },
-            { w: 2, a: 'center' },
-            { w: 5, a: 'center' },
-            { w: 1, a: 'right' }
-        ],
-        T4PHwidth: [
-            { w: 3, a: 'left' },
-            { w: 3, a: 'left' },
-            { w: 3, a: 'right' },
-            { w: 3, a: 'right' }
-        ],
-        T9SHwidth: [
-            { w: 1 },
-            { w: 14 },
-            { w: 1 },
-            { w: 4 },
-            { w: 1 },
-            { w: 4 },
-            { w: 1 },
-            { w: 4 },
-            { w: 1 }
-        ],
-        T11SBwidth: [
-            { w: 1 },
-            { w: 4 },
-            { w: 1 },
-            { w: 9 },
-            { w: 1 },
-            { w: 4 },
-            { w: 1 },
-            { w: 4 },
-            { w: 1 },
-            { w: 4 },
-            { w: 1 }
-        ]
-    }
-
-    SelectPaperConfigStructure = null
-
-    estructureFor48 = {
-        T4D1width: [{ w: 10 }, { w: 14 }, { w: 10 }, { w: 14 }],
-        T2D2width: [{ w: 10 }, { w: 38 }],
-        T4D3width: [{ w: 6 }, { w: 6 }, { w: 6 }, { w: 6, a: 'right' }],
-        T5Cwidth: [
-            { w: 4, a: 'left' },
-            { w: 29, a: 'center' },
-            { w: 5, a: 'center' },
-            { w: 9, a: 'center' },
-            { w: 1, a: 'right' }
-        ],
-        T4PHwidth: [
-            { w: 12, a: 'left' },
-            { w: 12, a: 'left' },
-            { w: 12, a: 'right' },
-            { w: 12, a: 'right' }
-        ],
-        T9SHwidth: [
-            { w: 1 },
-            { w: 22 },
-            { w: 1 },
-            { w: 7 },
-            { w: 1 },
-            { w: 7 },
-            { w: 1 },
-            { w: 7 },
-            { w: 1 }
-        ],
-        T11SBwidth: [
-            { w: 1 },
-            { w: 7 },
-            { w: 1 },
-            { w: 14 },
-            { w: 1 },
-            { w: 7 },
-            { w: 1 },
-            { w: 7 },
-            { w: 1 },
-            { w: 7 },
-            { w: 1 }
-        ]
-    }
+    SelectPaperConfigStructure: TableStructure = null
 
     device: USBDevice
     private _geocercas: any[] = []
@@ -150,7 +65,8 @@ export class SalidaViewComponent implements OnInit {
         private deviceService: PrintUsbService,
         private salidaService: SalidaService,
         private geocercaService: GeocercaService,
-        private pgs: PrintGeneralService
+        private pgs: PrintGeneralService,
+        private toastr: ToastrService
     ) {}
     private imprimirNombre: ConfiguracionesModel
     private imprimirCodigo: ConfiguracionesModel
@@ -159,12 +75,10 @@ export class SalidaViewComponent implements OnInit {
 
     ngOnInit () {
         this.geocercaService.getGeocercaData().subscribe(data => {
-            // console.log('geocercas', data)
             this.geocercas = data
         })
 
         this.salidaService.getSalidaCompleta().subscribe(data => {
-            // console.log('data', data)
             if (data) {
                 this.salidaData = data
 
@@ -182,16 +96,16 @@ export class SalidaViewComponent implements OnInit {
         let finalSalidaData: SalidaPos = {
             header: {
                 textCompany: '',
-                table4Data1: [],
-                table2Data2: [],
-                table4Data3: []
+                rutaLado: [],
+                condCobr: [],
+                padHora: []
             },
             body: {
-                textLiqTitle: '',
-                table4PadHora: [],
-                table9SumHeader: [],
-                table9Suministros: [],
-                table5Controles: []
+                liqBoletos: '',
+                padHora2: [],
+                suministrosHead: [],
+                suministrosBody: [],
+                controles: []
             },
             footer: {
                 textHoraUser: '',
@@ -202,8 +116,6 @@ export class SalidaViewComponent implements OnInit {
 
         salida.controles.forEach(c => c.setGeocerca(this.geocercas))
         const controles = salida.controles.filter(c => c.control)
-        // console.log(this.geocercas)
-        // console.log('controles', controles, salida.controles)
         let personal = []
 
         finalSalidaData.header.textCompany = this.company.data
@@ -228,7 +140,7 @@ export class SalidaViewComponent implements OnInit {
             ]
         }
 
-        finalSalidaData.header.table4Data1 = [
+        finalSalidaData.header.rutaLado = [
             [
                 'RUTA',
                 this.ruta.codigo,
@@ -238,9 +150,9 @@ export class SalidaViewComponent implements OnInit {
             ['DIA', salida.inicio.toFormat('yy-MM-dd'), 'PLACA', salida.placa]
         ]
 
-        finalSalidaData.header.table2Data2 = personal
+        finalSalidaData.header.condCobr = personal
 
-        finalSalidaData.header.table4Data3 = [
+        finalSalidaData.header.padHora = [
             [
                 'PAD',
                 salida.padron + '',
@@ -249,30 +161,20 @@ export class SalidaViewComponent implements OnInit {
             ]
         ]
 
-        // const crls = controles.map(d => [
-        //     '|',
-        //     d.geocercaName.slice(0, 20),
-        //     '|',
-        //     d.hora.toFormat('HH:mm'),
-        //     '|'
-        // ])
         const crls = controles.map(d => [
             d.geocercaName.slice(0, 20),
             d.hora.toFormat('HH:mm')
         ])
-
-        console.log('crls', crls)
-        finalSalidaData.body.table5Controles = [
+        finalSalidaData.body.controles = [
             // ['', '', '', '', ''],
 
             ['CONTROL', 'HORA'],
             ...crls
         ]
-        console.log(finalSalidaData.body.table5Controles)
 
         if (salida.unidad.suministros.length > 0 && imprimirLiquidacion) {
-            finalSalidaData.body.textLiqTitle = 'LIQUIDACION DE BOLETOS'
-            finalSalidaData.body.table4PadHora = [
+            finalSalidaData.body.liqBoletos = 'LIQUIDACION DE BOLETOS'
+            finalSalidaData.body.padHora2 = [
                 [
                     'PAD',
                     salida.padron + '',
@@ -280,13 +182,13 @@ export class SalidaViewComponent implements OnInit {
                     salida.inicio.toFormat('HH:mm')
                 ]
             ]
-            finalSalidaData.body.table9SumHeader = [
+            finalSalidaData.body.suministrosHead = [
                 ['INSPECT'],
                 ['LUGAR'],
                 ['HORA']
             ]
 
-            finalSalidaData.body.table9Suministros = [
+            finalSalidaData.body.suministrosBody = [
                 ...salida.unidad.suministros.map(s => {
                     const tacos = Math.floor((s.fin - s.actual) / 100)
                     let inicio =
@@ -304,21 +206,19 @@ export class SalidaViewComponent implements OnInit {
         )} ${this.user.username.toUpperCase()}`
         finalSalidaData.footer.textSalida = `SALIDA: ${salida.id}`
         finalSalidaData.footer.textData = `Sistema de Gestion TCONTUR`
-
-        console.log('structureData', finalSalidaData)
-        console.log(
-            finalSalidaData.body.table9SumHeader,
-            finalSalidaData.body.table9Suministros.map(s =>
-                this.dataToTablePos(s, 11)
-            )
-        )
-
         this.dataForPrint = finalSalidaData
     }
 
     async generateCodeSalida (): Promise<EscPosEncoder> {
+        const valueUnderline = this.pgs.withPrint
+            ? this.pgs.withPrint === WithPrint.MM80
+                ? 2
+                : false
+            : true
+
         const codeSalida = new EscPosEncoder()
             .align('center')
+            .codepage('windows1251')
             .size(3)
             .underline(false)
 
@@ -326,114 +226,94 @@ export class SalidaViewComponent implements OnInit {
             codeSalida.line(this.dataForPrint.header.textCompany).emptyLine(1)
         }
 
-        if (this.dataForPrint.header.table4Data1) {
+        if (this.dataForPrint.header.rutaLado) {
             codeSalida.align('left').table(
-                this.SelectPaperConfigStructure.T4D1width.map(item => ({
+                this.SelectPaperConfigStructure.colRutaLado.map(item => ({
                     width: item.w
                 })),
-                [...this.dataForPrint.header.table4Data1]
+                [...this.dataForPrint.header.rutaLado]
             )
         }
-        if (this.dataForPrint.header.table2Data2) {
+        if (this.dataForPrint.header.condCobr) {
             codeSalida.align('left').table(
-                this.SelectPaperConfigStructure.T2D2width.map(items => ({
+                this.SelectPaperConfigStructure.colCondCobr.map(items => ({
                     width: items.w
                 })),
-                [...this.dataForPrint.header.table2Data2]
+                [...this.dataForPrint.header.condCobr]
             )
         }
-        if (this.dataForPrint.header.table4Data3) {
+        if (this.dataForPrint.header.padHora) {
             codeSalida.size(2).table(
-                this.SelectPaperConfigStructure.T4D3width.map(item => ({
+                this.SelectPaperConfigStructure.colPadHora.map(item => ({
                     width: item.w,
                     align: item.a ? item.a : 'center'
                 })),
-                [...this.dataForPrint.header.table4Data3]
+                [...this.dataForPrint.header.padHora]
             )
         }
-        if (this.dataForPrint.body.table5Controles) {
-            console.log(this.dataForPrint.body.table5Controles)
-            const controlesTable = this.dataForPrint.body.table5Controles.map(
-                item => this.dataToTablePos(item, 5)
+        if (this.dataForPrint.body.controles) {
+            console.log(this.dataForPrint.body.controles)
+            const controlesTable = this.dataForPrint.body.controles.map(item =>
+                this.dataToTablePos(item, 5)
             )
-            console.log('controlesTable', controlesTable)
-            console.log(this.dataForPrint.body.table5Controles)
 
             codeSalida
                 .size(3)
-                .underline(1)
+                .underline(valueUnderline)
                 .bold(false)
-                .underline(true)
-                .underline(2)
+
+                .underline(valueUnderline)
                 .table(
-                    this.SelectPaperConfigStructure.T5Cwidth.map(item => ({
+                    this.SelectPaperConfigStructure.colControles.map(item => ({
                         width: item.w,
                         align: item.a ? item.a : 'center'
                     })),
-                    [...controlesTable]
+                    [['', '', '', '', ''], ...controlesTable]
                 )
                 .underline(false)
         }
 
-        if (this.dataForPrint.body.textLiqTitle && false) {
+        if (this.dataForPrint.body.liqBoletos) {
             codeSalida
                 .emptyLine(1)
                 .align('center')
                 .bold(true)
                 .size(3)
-                .line(this.dataForPrint.body.textLiqTitle)
+                .line(this.dataForPrint.body.liqBoletos)
         }
 
-        if (this.dataForPrint.body.table4PadHora) {
+        if (this.dataForPrint.body.padHora2) {
             codeSalida.size(3).table(
-                [
-                    {
-                        width: 12,
-                        align: 'left'
-                    },
-                    {
-                        width: 12,
-                        align: 'left'
-                    },
-                    {
-                        width: 12,
-                        align: 'right'
-                    },
-                    {
-                        width: 12,
-                        align: 'right'
-                    }
-                ],
-                [...this.dataForPrint.body.table4PadHora]
+                this.SelectPaperConfigStructure.colPadHora2.map(item => ({
+                    width: item.w,
+                    align: item.a ? item.a : 'center'
+                })),
+                [...this.dataForPrint.body.padHora2]
             )
         }
 
-        if (this.dataForPrint.body.table9Suministros) {
-            const columsT9 = this.dataForPrint.body.table9SumHeader.map(s =>
+        if (this.dataForPrint.body.suministrosBody) {
+            const columsT9 = this.dataForPrint.body.suministrosHead.map(s =>
                 this.dataToTablePos(s, 9)
             )
 
-            const columnT11sum = this.dataForPrint.body.table9Suministros.map(
-                s => this.dataToTablePos(s, 11)
+            const columnT11sum = this.dataForPrint.body.suministrosBody.map(s =>
+                this.dataToTablePos(s, 11)
             )
-            console.log('asdddddddd', this.dataForPrint.body.table9Suministros)
-            console.log('columsT9', columnT11sum)
-            console.log('columsT9', columsT9)
             codeSalida
                 .bold(false)
                 .align('left')
                 .size(3)
-                .underline(true)
-                .underline(2)
+                .underline(valueUnderline)
                 .table(
-                    this.SelectPaperConfigStructure.T9SHwidth.map(item => ({
+                    this.SelectPaperConfigStructure.colSumHead.map(item => ({
                         width: item.w
                     })),
 
                     [['', '', '', '', '', '', '', '', ''], ...columsT9]
                 )
                 .table(
-                    this.SelectPaperConfigStructure.T11SBwidth.map(item => ({
+                    this.SelectPaperConfigStructure.colSumBody.map(item => ({
                         width: item.w
                     })),
 
@@ -452,15 +332,19 @@ export class SalidaViewComponent implements OnInit {
                 .line(this.dataForPrint.footer.textData)
         }
 
-        codeSalida.size(3).emptyLine(1).cut()
+        codeSalida.size(3).cut()
         return codeSalida
     }
 
     async getTicketUnicode () {
+        if (!this.pgs.withPrint) {
+            this.toastr.warning('Seleccione el ancho de impresión')
+            return
+        }
         if (this.pgs.withPrint === WithPrint.MM80) {
-            this.SelectPaperConfigStructure = this.estructureFor48
+            this.SelectPaperConfigStructure = estructureFor48
         } else if (this.pgs.withPrint === WithPrint.MM58) {
-            this.SelectPaperConfigStructure = this.estructureFor32
+            this.SelectPaperConfigStructure = estructureFor32
         }
         if (!this.pgs.withPrint) {
             console.log('No se ha seleccionado el tamaño de papel')
@@ -483,10 +367,14 @@ export class SalidaViewComponent implements OnInit {
         empySpace?: string
     ): string[] {
         const transformedData: string[] = []
-
+        const inUserSymbol = this.pgs.withPrint
+            ? this.pgs.withPrint === WithPrint.MM80
+                ? '|'
+                : ''
+            : '|'
         for (let i = 0; i < numColumns; i++) {
             if (i % 2 === 0) {
-                transformedData.push('|') // Añadir celda vacía entre datos
+                transformedData.push(inUserSymbol) // Añadir celda vacía entre datos
             } else {
                 const dataIndex = Math.floor(i / 2)
                 if (dataIndex < data.length) {
