@@ -209,7 +209,7 @@ export class SalidaViewComponent implements OnInit {
         this.dataForPrint = finalSalidaData
     }
 
-    async generateCodeSalida (): Promise<EscPosEncoder> {
+    generateCodeSalida (): EscPosEncoder {
         const valueUnderline = this.pgs.withPrint
             ? this.pgs.withPrint === WithPrint.MM80
                 ? 2
@@ -336,7 +336,7 @@ export class SalidaViewComponent implements OnInit {
         return codeSalida
     }
 
-    async getTicketUnicode () {
+    getTicketUnicode () {
         if (!this.pgs.withPrint) {
             this.toastr.warning('Seleccione el ancho de impresión')
             return
@@ -349,7 +349,7 @@ export class SalidaViewComponent implements OnInit {
         if (!this.pgs.withPrint) {
             console.log('No se ha seleccionado el tamaño de papel')
         }
-        const salida = (await this.generateCodeSalida()).encode()
+        const salida = this.generateCodeSalida().encode()
         this.pgs.print(salida)
     }
     async sendDataToDevice (data: Uint8Array): Promise<void> {
