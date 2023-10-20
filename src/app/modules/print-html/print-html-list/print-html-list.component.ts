@@ -507,12 +507,12 @@ export class PrintHtmlListComponent implements OnInit {
             combinedCode.set(body, header.byteLength)
             combinedCode.set(footer, header.byteLength + body.byteLength)
 
-            await this.sendDataToDevice(combinedCode)
+            this.sendDataToDevice(combinedCode)
         }
     }
 
-    async sendDataToDevice (data: Uint8Array): Promise<void> {
-        await this.pgs.print(data)
+    sendDataToDevice (data: Uint8Array): void {
+        this.pgs.print(data)
     }
     transformDate (date: DateTime): string {
         // 2023-07-27T10:25:20.958149-05:00"
