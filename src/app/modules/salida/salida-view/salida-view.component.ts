@@ -22,6 +22,7 @@ import { ToastrService } from 'ngx-toastr'
 import { TableStructure } from '../utils/anchoConfig.interface'
 import { estructureFor48 } from '../utils/withCol48'
 import { estructureFor32 } from '../utils/withCol32'
+import { TDocumentDefinitions } from 'pdfmake/interfaces'
 
 @Component({
     selector: 'app-salida-view',
@@ -341,6 +342,7 @@ export class SalidaViewComponent implements OnInit {
             this.toastr.warning('Seleccione el ancho de impresión')
             return
         }
+
         if (this.pgs.withPrint === WithPrint.MM80) {
             this.SelectPaperConfigStructure = estructureFor48
         } else if (this.pgs.withPrint === WithPrint.MM58) {

@@ -56,11 +56,14 @@ export class PrintGeneralModalComponent implements OnInit, AfterViewInit {
             .pipe(
                 filter(device => device !== null && device !== undefined),
                 switchMap(() => {
-                    console.log('device', this.pgs.deviceType.value)
+                    // console.log('device', this.pgs.deviceType.value)
                     return this.pgs.getInformation()
                 }),
                 tap((infoDevice: InfoDevice) => {
-                    console.log('infoDevice', infoDevice)
+                    // console.log('infoDevice', infoDevice)
+                    this.opcionesForm.patchValue({
+                        withPrint: this.pgs.withPrint
+                    })
                     this.printerInfo = infoDevice
                 }),
                 switchMap(() => {

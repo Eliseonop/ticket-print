@@ -62,7 +62,16 @@ export class PrintGeneralService {
     }
 
     selectPrinter (deviceType: DeviceType): void {
+        console.log('Seleccionando dispositivo', deviceType)
         this.selectNoneAndDisconnect()
+        if (deviceType === DeviceType.USB) {
+            this.withPrint = WithPrint.MM80
+        } else if (deviceType === DeviceType.BLUETOOTH) {
+            this.withPrint = WithPrint.MM58
+        } else if (deviceType === DeviceType.PDF) {
+            this.withPrint = null
+        }
+
         this.deviceType.next(deviceType)
     }
 
@@ -125,6 +134,8 @@ export class PrintGeneralService {
             this.usbService.write(data)
         } else if (this.deviceType.value === DeviceType.BLUETOOTH) {
             this.bluetoothService.write(data)
+        } else if (this.deviceType.value === DeviceType.PDF) {
+            this.pdfService.write(data)
         }
     }
 }

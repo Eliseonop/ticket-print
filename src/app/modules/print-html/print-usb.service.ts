@@ -184,10 +184,16 @@ export class PrintUsbService {
         try {
             this.process.next('Imprimiendo...')
 
-            await this.selectedDevice.value.transferOut(
-                this.endPoint.endpointNumber,
-                data
-            )
+            this.selectedDevice.value
+                .transferOut(this.endPoint.endpointNumber, data)
+                .then(result => {
+                    console.log('result', result)
+                })
+                .catch(error => {
+                    console.log('error', error)
+                })
+
+            // console.log('impresion', impresion)
 
             this.process.next('Impresión finalizada')
         } catch (error) {
